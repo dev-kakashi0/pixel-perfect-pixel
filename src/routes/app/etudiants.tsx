@@ -252,7 +252,7 @@ function EtudiantsPage() {
   );
 }
 
-function Info({ label, value }: { label: string; value?: string | null }) {
+function Info({ label, value }: { label: string; value: string | null | undefined }) {
   return (
     <div>
       <dt className="text-xs text-muted-foreground">{label}</dt>
