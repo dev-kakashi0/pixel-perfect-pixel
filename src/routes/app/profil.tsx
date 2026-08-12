@@ -109,15 +109,22 @@ function ProfilPage() {
       </div>
 
       <div className="surface-card p-4">
-        <p className="text-xs uppercase tracking-wide text-muted-foreground">Maison assignée</p>
-        <div className="mt-1">
+        <p className="text-xs uppercase tracking-wide text-muted-foreground">Ville & maison</p>
+        <div className="mt-2 flex flex-wrap gap-2">
+          {profile?.ville && <Badge variant="outline">{profile.ville}</Badge>}
           {house ? (
-            <Badge>{house.nom} · {house.ville}</Badge>
+            <Badge>
+              {house.nom} · {house.ville}
+            </Badge>
           ) : (
-            <span className="text-sm text-muted-foreground">Aucune maison pour le moment</span>
+            <span className="text-sm text-muted-foreground">
+              Aucune maison pour le moment — l'administrateur vous répartira dans une maison de
+              votre ville.
+            </span>
           )}
         </div>
       </div>
+
 
       <form className="surface-card space-y-4 p-5" onSubmit={save}>
         <div className="grid gap-4 sm:grid-cols-2">
