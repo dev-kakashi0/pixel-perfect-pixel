@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteRouteImport } from './routes/app/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppIndexRouteImport } from './routes/app/index'
+import { Route as AppMaisonsRouteImport } from './routes/app/maisons'
 import { Route as AppProfilRouteImport } from './routes/app/profil'
 
 const IndexRoute = IndexRouteImport.update({
@@ -35,6 +36,11 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppMaisonsRoute = AppMaisonsRouteImport.update({
+  id: '/maisons',
+  path: '/maisons',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const AppProfilRoute = AppProfilRouteImport.update({
   id: '/profil',
   path: '/profil',
@@ -45,12 +51,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/app/maisons': typeof AppMaisonsRoute
   '/app/profil': typeof AppProfilRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/app/maisons': typeof AppMaisonsRoute
   '/app/profil': typeof AppProfilRoute
   '/app': typeof AppIndexRoute
 }
@@ -59,15 +67,23 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/app': typeof AppRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/app/maisons': typeof AppMaisonsRoute
   '/app/profil': typeof AppProfilRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/app' | '/auth' | '/app/profil' | '/app/'
+  fullPaths: '/' | '/app' | '/auth' | '/app/maisons' | '/app/profil' | '/app/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/app/profil' | '/app'
-  id: '__root__' | '/' | '/app' | '/auth' | '/app/profil' | '/app/'
+  to: '/' | '/auth' | '/app/maisons' | '/app/profil' | '/app'
+  id:
+    | '__root__'
+    | '/'
+    | '/app'
+    | '/auth'
+    | '/app/maisons'
+    | '/app/profil'
+    | '/app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -106,6 +122,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/app/maisons': {
+      id: '/app/maisons'
+      path: '/maisons'
+      fullPath: '/app/maisons'
+      preLoaderRoute: typeof AppMaisonsRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/app/profil': {
       id: '/app/profil'
       path: '/profil'
@@ -117,11 +140,13 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppRouteRouteChildren {
+  AppMaisonsRoute: typeof AppMaisonsRoute
   AppProfilRoute: typeof AppProfilRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
+  AppMaisonsRoute: AppMaisonsRoute,
   AppProfilRoute: AppProfilRoute,
   AppIndexRoute: AppIndexRoute,
 }
