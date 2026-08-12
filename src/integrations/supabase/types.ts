@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      house_assignments: {
+        Row: {
+          annee_academique: string
+          created_at: string
+          house_id: string
+          id: string
+          profile_id: string
+        }
+        Insert: {
+          annee_academique: string
+          created_at?: string
+          house_id: string
+          id?: string
+          profile_id: string
+        }
+        Update: {
+          annee_academique?: string
+          created_at?: string
+          house_id?: string
+          id?: string
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "house_assignments_house_id_fkey"
+            columns: ["house_id"]
+            isOneToOne: false
+            referencedRelation: "houses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "house_assignments_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       houses: {
         Row: {
           capacite: number
@@ -57,6 +96,7 @@ export type Database = {
           statut: Database["public"]["Enums"]["profile_status"]
           telephone: string | null
           updated_at: string
+          ville: string | null
         }
         Insert: {
           age?: number | null
@@ -73,6 +113,7 @@ export type Database = {
           statut?: Database["public"]["Enums"]["profile_status"]
           telephone?: string | null
           updated_at?: string
+          ville?: string | null
         }
         Update: {
           age?: number | null
@@ -89,6 +130,7 @@ export type Database = {
           statut?: Database["public"]["Enums"]["profile_status"]
           telephone?: string | null
           updated_at?: string
+          ville?: string | null
         }
         Relationships: [
           {
@@ -149,6 +191,7 @@ export type Database = {
         Returns: boolean
       }
       my_house_id: { Args: { _user_id: string }; Returns: string }
+      my_ville: { Args: { _user_id: string }; Returns: string }
     }
     Enums: {
       app_role: "admin" | "responsable" | "etudiant"

@@ -16,6 +16,7 @@ export type Profile = {
   house_id: string | null;
   annee_integration: number | null;
   telephone: string | null;
+  ville: "Lomé" | "Kara" | null;
   statut: "en_attente" | "valide" | "refuse";
 };
 
