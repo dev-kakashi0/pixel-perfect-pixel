@@ -3,6 +3,8 @@ import { useEffect } from "react";
 import { Home, LayoutDashboard, LogOut, User, Users } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
+import { VilleGate } from "@/components/ville-gate";
+import logo from "@/assets/logo-tda.png";
 
 export const Route = createFileRoute("/app")({
   component: AppLayout,
@@ -25,28 +27,50 @@ function AppLayout() {
     );
   }
 
+  if (profile && !profile.ville && !isAdmin) {
+    return <VilleGate />;
+  }
+
   const nav = [
-    { to: "/app", label: "Tableau de bord", icon: LayoutDashboard, show: true },
-    { to: "/app/etudiants", label: "Étudiants", icon: Users, show: isAdmin || isResponsable },
-    { to: "/app/maisons", label: "Maisons", icon: Home, show: true },
-    { to: "/app/profil", label: "Profil", icon: User, show: true },
+    { to: "/app", label: "Tableau de bord", icon: LayoutDashboard, show: true, color: "text-brand-pink" },
+    {
+      to: "/app/etudiants",
+      label: "Étudiants",
+      icon: Users,
+      show: isAdmin || isResponsable,
+      color: "text-brand-blue",
+    },
+    { to: "/app/maisons", label: "Maisons", icon: Home, show: true, color: "text-brand-green" },
+    { to: "/app/profil", label: "Profil", icon: User, show: true, color: "text-brand-orange" },
   ].filter((n) => n.show);
 
   return (
     <div className="min-h-screen bg-background pb-24">
       <header className="bg-gradient-deep px-5 py-5 text-primary-foreground">
         <div className="mx-auto flex max-w-4xl items-center justify-between gap-4">
-          <div>
-            <p className="text-xs uppercase tracking-[0.18em] opacity-75">Foyers ONG Togo</p>
-            <p className="text-lg font-semibold">
-              {profile?.prenom || profile?.nom
-                ? `${profile.prenom} ${profile.nom}`.trim()
-                : "Mon espace"}
-            </p>
+          <div className="flex items-center gap-3">
+            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-card p-1.5">
+              <img
+                src={logo}
+                alt="Logo Le Temps d'Aider"
+                width={40}
+                height={40}
+                className="h-full w-full object-contain"
+              />
+            </span>
+            <div>
+              <p className="text-xs uppercase tracking-[0.18em] opacity-80">Le Temps d'Aider</p>
+              <p className="text-lg font-semibold">
+                {profile?.prenom || profile?.nom
+                  ? `${profile.prenom} ${profile.nom}`.trim()
+                  : "Mon espace"}
+              </p>
+            </div>
           </div>
           <Button
             variant="secondary"
             size="sm"
+            className="rounded-full"
             onClick={async () => {
               await signOut();
               void navigate({ to: "/auth" });
@@ -71,10 +95,14 @@ function AppLayout() {
                 key={item.to}
                 to={item.to}
                 className={`flex flex-1 flex-col items-center gap-1 py-3 text-[11px] font-medium transition-colors ${
-                  active ? "text-primary" : "text-muted-foreground"
+                  active ? "text-foreground" : "text-muted-foreground"
                 }`}
               >
-                <item.icon className="h-5 w-5" />
+                <span
+                  className={`icon-chip h-9 w-9 ${active ? "bg-muted" : ""} ${item.color}`}
+                >
+                  <item.icon className="h-5 w-5" />
+                </span>
                 {item.label}
               </Link>
             );
