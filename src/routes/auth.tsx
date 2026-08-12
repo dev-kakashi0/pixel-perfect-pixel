@@ -53,7 +53,7 @@ function AuthPage() {
   const signUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true);
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -66,8 +66,12 @@ function AuthPage() {
       toast.error(error.message);
       return;
     }
-    toast.success("Compte créé. Un administrateur doit valider votre accès.");
-    void navigate({ to: "/app" });
+    if (data.session) {
+      toast.success("Compte créé. Un administrateur doit valider votre accès.");
+      void navigate({ to: "/app" });
+      return;
+    }
+    toast.success("Compte créé. Confirmez votre email, puis connectez-vous.");
   };
 
   const google = async () => {
