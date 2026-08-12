@@ -14,16 +14,146 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      houses: {
+        Row: {
+          capacite: number
+          created_at: string
+          genre: Database["public"]["Enums"]["house_gender"]
+          id: string
+          nom: string
+          ville: string
+        }
+        Insert: {
+          capacite?: number
+          created_at?: string
+          genre: Database["public"]["Enums"]["house_gender"]
+          id?: string
+          nom: string
+          ville: string
+        }
+        Update: {
+          capacite?: number
+          created_at?: string
+          genre?: Database["public"]["Enums"]["house_gender"]
+          id?: string
+          nom?: string
+          ville?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          age: number | null
+          annee_etude: string | null
+          annee_integration: number | null
+          created_at: string
+          email: string | null
+          faculte: string | null
+          house_id: string | null
+          id: string
+          nom: string
+          origine: string | null
+          prenom: string
+          statut: Database["public"]["Enums"]["profile_status"]
+          telephone: string | null
+          updated_at: string
+        }
+        Insert: {
+          age?: number | null
+          annee_etude?: string | null
+          annee_integration?: number | null
+          created_at?: string
+          email?: string | null
+          faculte?: string | null
+          house_id?: string | null
+          id: string
+          nom?: string
+          origine?: string | null
+          prenom?: string
+          statut?: Database["public"]["Enums"]["profile_status"]
+          telephone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          age?: number | null
+          annee_etude?: string | null
+          annee_integration?: number | null
+          created_at?: string
+          email?: string | null
+          faculte?: string | null
+          house_id?: string | null
+          id?: string
+          nom?: string
+          origine?: string | null
+          prenom?: string
+          statut?: Database["public"]["Enums"]["profile_status"]
+          telephone?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_house_id_fkey"
+            columns: ["house_id"]
+            isOneToOne: false
+            referencedRelation: "houses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          house_id: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          house_id?: string | null
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          house_id?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_roles_house_id_fkey"
+            columns: ["house_id"]
+            isOneToOne: false
+            referencedRelation: "houses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      manages_house: {
+        Args: { _house_id: string; _user_id: string }
+        Returns: boolean
+      }
+      my_house_id: { Args: { _user_id: string }; Returns: string }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "responsable" | "etudiant"
+      house_gender: "garcons" | "filles"
+      profile_status: "en_attente" | "valide" | "refuse"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +280,10 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "responsable", "etudiant"],
+      house_gender: ["garcons", "filles"],
+      profile_status: ["en_attente", "valide", "refuse"],
+    },
   },
 } as const
