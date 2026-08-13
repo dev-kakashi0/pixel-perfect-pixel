@@ -4,7 +4,8 @@ import { Home, LayoutDashboard, LogOut, User, Users } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { VilleGate } from "@/components/ville-gate";
-import logo from "@/assets/logo-tda.png";
+import logoAsset from "@/assets/logo-tda.png.asset.json";
+const logo = logoAsset.url;
 
 export const Route = createFileRoute("/app")({
   component: AppLayout,

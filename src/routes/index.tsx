@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { BookOpen, Home, Users, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import logo from "@/assets/logo-tda.png";
+import logoAsset from "@/assets/logo-tda.png.asset.json";
+const logo = logoAsset.url;
 
 export const Route = createFileRoute("/")({
   component: Landing,
