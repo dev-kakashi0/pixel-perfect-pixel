@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppIndexRouteImport } from './routes/app/index'
 import { Route as AppBibliothequeRouteImport } from './routes/app/bibliotheque'
 import { Route as AppEtudiantsRouteImport } from './routes/app/etudiants'
+import { Route as AppLectureRouteImport } from './routes/app/lecture'
 import { Route as AppMaisonsRouteImport } from './routes/app/maisons'
 import { Route as AppProfilRouteImport } from './routes/app/profil'
 
@@ -48,6 +49,11 @@ const AppEtudiantsRoute = AppEtudiantsRouteImport.update({
   path: '/etudiants',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppLectureRoute = AppLectureRouteImport.update({
+  id: '/lecture',
+  path: '/lecture',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const AppMaisonsRoute = AppMaisonsRouteImport.update({
   id: '/maisons',
   path: '/maisons',
@@ -65,6 +71,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/app/bibliotheque': typeof AppBibliothequeRoute
   '/app/etudiants': typeof AppEtudiantsRoute
+  '/app/lecture': typeof AppLectureRoute
   '/app/maisons': typeof AppMaisonsRoute
   '/app/profil': typeof AppProfilRoute
   '/app/': typeof AppIndexRoute
@@ -74,6 +81,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/app/bibliotheque': typeof AppBibliothequeRoute
   '/app/etudiants': typeof AppEtudiantsRoute
+  '/app/lecture': typeof AppLectureRoute
   '/app/maisons': typeof AppMaisonsRoute
   '/app/profil': typeof AppProfilRoute
   '/app': typeof AppIndexRoute
@@ -85,6 +93,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/app/bibliotheque': typeof AppBibliothequeRoute
   '/app/etudiants': typeof AppEtudiantsRoute
+  '/app/lecture': typeof AppLectureRoute
   '/app/maisons': typeof AppMaisonsRoute
   '/app/profil': typeof AppProfilRoute
   '/app/': typeof AppIndexRoute
@@ -97,6 +106,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/app/bibliotheque'
     | '/app/etudiants'
+    | '/app/lecture'
     | '/app/maisons'
     | '/app/profil'
     | '/app/'
@@ -106,6 +116,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/app/bibliotheque'
     | '/app/etudiants'
+    | '/app/lecture'
     | '/app/maisons'
     | '/app/profil'
     | '/app'
@@ -116,6 +127,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/app/bibliotheque'
     | '/app/etudiants'
+    | '/app/lecture'
     | '/app/maisons'
     | '/app/profil'
     | '/app/'
@@ -171,6 +183,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppEtudiantsRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/app/lecture': {
+      id: '/app/lecture'
+      path: '/lecture'
+      fullPath: '/app/lecture'
+      preLoaderRoute: typeof AppLectureRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/app/maisons': {
       id: '/app/maisons'
       path: '/maisons'
@@ -191,6 +210,7 @@ declare module '@tanstack/react-router' {
 interface AppRouteRouteChildren {
   AppBibliothequeRoute: typeof AppBibliothequeRoute
   AppEtudiantsRoute: typeof AppEtudiantsRoute
+  AppLectureRoute: typeof AppLectureRoute
   AppMaisonsRoute: typeof AppMaisonsRoute
   AppProfilRoute: typeof AppProfilRoute
   AppIndexRoute: typeof AppIndexRoute
@@ -199,6 +219,7 @@ interface AppRouteRouteChildren {
 const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppBibliothequeRoute: AppBibliothequeRoute,
   AppEtudiantsRoute: AppEtudiantsRoute,
+  AppLectureRoute: AppLectureRoute,
   AppMaisonsRoute: AppMaisonsRoute,
   AppProfilRoute: AppProfilRoute,
   AppIndexRoute: AppIndexRoute,
