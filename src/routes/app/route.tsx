@@ -33,13 +33,28 @@ function AppLayout() {
   }
 
   const nav = [
-    { to: "/app", label: "Tableau de bord", icon: LayoutDashboard, show: true, color: "text-brand-pink" },
+    { to: "/app", label: "Accueil", icon: LayoutDashboard, show: true, color: "text-brand-pink" },
     {
       to: "/app/etudiants",
       label: "Étudiants",
       icon: Users,
       show: isAdmin || isResponsable,
       color: "text-brand-blue",
+    },
+    {
+      to: "/app/bibliotheque",
+      label: "Livres",
+      icon: Library,
+      show: true,
+      color: "text-brand-pink",
+    },
+    { to: "/app/lecture", label: "Lecture", icon: BookOpen, show: true, color: "text-brand-green" },
+    {
+      to: "/app/contributions",
+      label: "Cotisations",
+      icon: Wallet,
+      show: true,
+      color: "text-brand-orange",
     },
     { to: "/app/maisons", label: "Maisons", icon: Home, show: true, color: "text-brand-green" },
     { to: "/app/profil", label: "Profil", icon: User, show: true, color: "text-brand-orange" },
