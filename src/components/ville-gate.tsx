@@ -4,7 +4,8 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
-import logo from "@/assets/logo-tda.png";
+import logoAsset from "@/assets/logo-tda.png.asset.json";
+const logo = logoAsset.url;
 
 const villes = [
   { nom: "Lomé", texte: "6 maisons dans la capitale", couleur: "bg-brand-pink" },
