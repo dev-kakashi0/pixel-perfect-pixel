@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteRouteImport } from './routes/app/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppIndexRouteImport } from './routes/app/index'
+import { Route as AppBibliothequeRouteImport } from './routes/app/bibliotheque'
 import { Route as AppEtudiantsRouteImport } from './routes/app/etudiants'
 import { Route as AppMaisonsRouteImport } from './routes/app/maisons'
 import { Route as AppProfilRouteImport } from './routes/app/profil'
@@ -37,6 +38,11 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppBibliothequeRoute = AppBibliothequeRouteImport.update({
+  id: '/bibliotheque',
+  path: '/bibliotheque',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const AppEtudiantsRoute = AppEtudiantsRouteImport.update({
   id: '/etudiants',
   path: '/etudiants',
@@ -57,6 +63,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/app/bibliotheque': typeof AppBibliothequeRoute
   '/app/etudiants': typeof AppEtudiantsRoute
   '/app/maisons': typeof AppMaisonsRoute
   '/app/profil': typeof AppProfilRoute
@@ -65,6 +72,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/app/bibliotheque': typeof AppBibliothequeRoute
   '/app/etudiants': typeof AppEtudiantsRoute
   '/app/maisons': typeof AppMaisonsRoute
   '/app/profil': typeof AppProfilRoute
@@ -75,6 +83,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/app': typeof AppRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/app/bibliotheque': typeof AppBibliothequeRoute
   '/app/etudiants': typeof AppEtudiantsRoute
   '/app/maisons': typeof AppMaisonsRoute
   '/app/profil': typeof AppProfilRoute
@@ -86,17 +95,26 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/auth'
+    | '/app/bibliotheque'
     | '/app/etudiants'
     | '/app/maisons'
     | '/app/profil'
     | '/app/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/app/etudiants' | '/app/maisons' | '/app/profil' | '/app'
+  to:
+    | '/'
+    | '/auth'
+    | '/app/bibliotheque'
+    | '/app/etudiants'
+    | '/app/maisons'
+    | '/app/profil'
+    | '/app'
   id:
     | '__root__'
     | '/'
     | '/app'
     | '/auth'
+    | '/app/bibliotheque'
     | '/app/etudiants'
     | '/app/maisons'
     | '/app/profil'
@@ -139,6 +157,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/app/bibliotheque': {
+      id: '/app/bibliotheque'
+      path: '/bibliotheque'
+      fullPath: '/app/bibliotheque'
+      preLoaderRoute: typeof AppBibliothequeRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/app/etudiants': {
       id: '/app/etudiants'
       path: '/etudiants'
@@ -164,6 +189,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppRouteRouteChildren {
+  AppBibliothequeRoute: typeof AppBibliothequeRoute
   AppEtudiantsRoute: typeof AppEtudiantsRoute
   AppMaisonsRoute: typeof AppMaisonsRoute
   AppProfilRoute: typeof AppProfilRoute
@@ -171,6 +197,7 @@ interface AppRouteRouteChildren {
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
+  AppBibliothequeRoute: AppBibliothequeRoute,
   AppEtudiantsRoute: AppEtudiantsRoute,
   AppMaisonsRoute: AppMaisonsRoute,
   AppProfilRoute: AppProfilRoute,
