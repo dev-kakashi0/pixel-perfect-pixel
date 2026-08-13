@@ -14,6 +14,116 @@ export type Database = {
   }
   public: {
     Tables: {
+      book_assignments: {
+        Row: {
+          annee_integration: number | null
+          book_id: string
+          created_at: string
+          id: string
+          ordre_lecture: number
+          student_id: string
+        }
+        Insert: {
+          annee_integration?: number | null
+          book_id: string
+          created_at?: string
+          id?: string
+          ordre_lecture?: number
+          student_id: string
+        }
+        Update: {
+          annee_integration?: number | null
+          book_id?: string
+          created_at?: string
+          id?: string
+          ordre_lecture?: number
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "book_assignments_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "book_assignments_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      books: {
+        Row: {
+          auteur: string | null
+          couverture_url: string | null
+          created_at: string
+          id: string
+          pages_total: number
+          titre: string
+        }
+        Insert: {
+          auteur?: string | null
+          couverture_url?: string | null
+          created_at?: string
+          id?: string
+          pages_total?: number
+          titre: string
+        }
+        Update: {
+          auteur?: string | null
+          couverture_url?: string | null
+          created_at?: string
+          id?: string
+          pages_total?: number
+          titre?: string
+        }
+        Relationships: []
+      }
+      contributions: {
+        Row: {
+          coche_le: string | null
+          coche_par: string | null
+          created_at: string
+          id: string
+          mois: string
+          montant: number
+          paye: boolean
+          student_id: string
+        }
+        Insert: {
+          coche_le?: string | null
+          coche_par?: string | null
+          created_at?: string
+          id?: string
+          mois: string
+          montant?: number
+          paye?: boolean
+          student_id: string
+        }
+        Update: {
+          coche_le?: string | null
+          coche_par?: string | null
+          created_at?: string
+          id?: string
+          mois?: string
+          montant?: number
+          paye?: boolean
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contributions_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       house_assignments: {
         Row: {
           annee_academique: string
@@ -142,6 +252,51 @@ export type Database = {
           },
         ]
       }
+      reading_logs: {
+        Row: {
+          book_id: string | null
+          created_at: string
+          date: string
+          id: string
+          motif_non_lecture: string | null
+          pages_lues: number
+          student_id: string
+        }
+        Insert: {
+          book_id?: string | null
+          created_at?: string
+          date?: string
+          id?: string
+          motif_non_lecture?: string | null
+          pages_lues?: number
+          student_id: string
+        }
+        Update: {
+          book_id?: string | null
+          created_at?: string
+          date?: string
+          id?: string
+          motif_non_lecture?: string | null
+          pages_lues?: number
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reading_logs_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reading_logs_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -188,6 +343,10 @@ export type Database = {
       }
       manages_house: {
         Args: { _house_id: string; _user_id: string }
+        Returns: boolean
+      }
+      manages_student: {
+        Args: { _student_id: string; _user_id: string }
         Returns: boolean
       }
       my_house_id: { Args: { _user_id: string }; Returns: string }

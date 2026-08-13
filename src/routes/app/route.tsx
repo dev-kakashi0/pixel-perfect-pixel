@@ -1,6 +1,6 @@
 import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { Home, LayoutDashboard, LogOut, User, Users } from "lucide-react";
+import { BookOpen, Home, LayoutDashboard, Library, LogOut, User, Users, Wallet } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { VilleGate } from "@/components/ville-gate";
@@ -33,13 +33,28 @@ function AppLayout() {
   }
 
   const nav = [
-    { to: "/app", label: "Tableau de bord", icon: LayoutDashboard, show: true, color: "text-brand-pink" },
+    { to: "/app", label: "Accueil", icon: LayoutDashboard, show: true, color: "text-brand-pink" },
     {
       to: "/app/etudiants",
       label: "Étudiants",
       icon: Users,
       show: isAdmin || isResponsable,
       color: "text-brand-blue",
+    },
+    {
+      to: "/app/bibliotheque",
+      label: "Livres",
+      icon: Library,
+      show: true,
+      color: "text-brand-pink",
+    },
+    { to: "/app/lecture", label: "Lecture", icon: BookOpen, show: true, color: "text-brand-green" },
+    {
+      to: "/app/contributions",
+      label: "Cotisations",
+      icon: Wallet,
+      show: true,
+      color: "text-brand-orange",
     },
     { to: "/app/maisons", label: "Maisons", icon: Home, show: true, color: "text-brand-green" },
     { to: "/app/profil", label: "Profil", icon: User, show: true, color: "text-brand-orange" },
@@ -88,14 +103,14 @@ function AppLayout() {
       </main>
 
       <nav className="fixed inset-x-0 bottom-0 border-t bg-card/95 backdrop-blur">
-        <div className="mx-auto flex max-w-4xl">
+        <div className="mx-auto flex max-w-4xl overflow-x-auto">
           {nav.map((item) => {
             const active = pathname === item.to;
             return (
               <Link
                 key={item.to}
                 to={item.to}
-                className={`flex flex-1 flex-col items-center gap-1 py-3 text-[11px] font-medium transition-colors ${
+                className={`flex min-w-[68px] flex-1 flex-col items-center gap-1 py-3 text-[11px] font-medium transition-colors ${
                   active ? "text-foreground" : "text-muted-foreground"
                 }`}
               >

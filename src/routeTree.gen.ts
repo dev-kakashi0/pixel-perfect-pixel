@@ -13,7 +13,10 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteRouteImport } from './routes/app/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppIndexRouteImport } from './routes/app/index'
+import { Route as AppBibliothequeRouteImport } from './routes/app/bibliotheque'
+import { Route as AppContributionsRouteImport } from './routes/app/contributions'
 import { Route as AppEtudiantsRouteImport } from './routes/app/etudiants'
+import { Route as AppLectureRouteImport } from './routes/app/lecture'
 import { Route as AppMaisonsRouteImport } from './routes/app/maisons'
 import { Route as AppProfilRouteImport } from './routes/app/profil'
 
@@ -37,9 +40,24 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppBibliothequeRoute = AppBibliothequeRouteImport.update({
+  id: '/bibliotheque',
+  path: '/bibliotheque',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppContributionsRoute = AppContributionsRouteImport.update({
+  id: '/contributions',
+  path: '/contributions',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const AppEtudiantsRoute = AppEtudiantsRouteImport.update({
   id: '/etudiants',
   path: '/etudiants',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppLectureRoute = AppLectureRouteImport.update({
+  id: '/lecture',
+  path: '/lecture',
   getParentRoute: () => AppRouteRoute,
 } as any)
 const AppMaisonsRoute = AppMaisonsRouteImport.update({
@@ -57,7 +75,10 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/app/bibliotheque': typeof AppBibliothequeRoute
+  '/app/contributions': typeof AppContributionsRoute
   '/app/etudiants': typeof AppEtudiantsRoute
+  '/app/lecture': typeof AppLectureRoute
   '/app/maisons': typeof AppMaisonsRoute
   '/app/profil': typeof AppProfilRoute
   '/app/': typeof AppIndexRoute
@@ -65,7 +86,10 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/app/bibliotheque': typeof AppBibliothequeRoute
+  '/app/contributions': typeof AppContributionsRoute
   '/app/etudiants': typeof AppEtudiantsRoute
+  '/app/lecture': typeof AppLectureRoute
   '/app/maisons': typeof AppMaisonsRoute
   '/app/profil': typeof AppProfilRoute
   '/app': typeof AppIndexRoute
@@ -75,7 +99,10 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/app': typeof AppRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/app/bibliotheque': typeof AppBibliothequeRoute
+  '/app/contributions': typeof AppContributionsRoute
   '/app/etudiants': typeof AppEtudiantsRoute
+  '/app/lecture': typeof AppLectureRoute
   '/app/maisons': typeof AppMaisonsRoute
   '/app/profil': typeof AppProfilRoute
   '/app/': typeof AppIndexRoute
@@ -86,18 +113,33 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/auth'
+    | '/app/bibliotheque'
+    | '/app/contributions'
     | '/app/etudiants'
+    | '/app/lecture'
     | '/app/maisons'
     | '/app/profil'
     | '/app/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/app/etudiants' | '/app/maisons' | '/app/profil' | '/app'
+  to:
+    | '/'
+    | '/auth'
+    | '/app/bibliotheque'
+    | '/app/contributions'
+    | '/app/etudiants'
+    | '/app/lecture'
+    | '/app/maisons'
+    | '/app/profil'
+    | '/app'
   id:
     | '__root__'
     | '/'
     | '/app'
     | '/auth'
+    | '/app/bibliotheque'
+    | '/app/contributions'
     | '/app/etudiants'
+    | '/app/lecture'
     | '/app/maisons'
     | '/app/profil'
     | '/app/'
@@ -139,11 +181,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/app/bibliotheque': {
+      id: '/app/bibliotheque'
+      path: '/bibliotheque'
+      fullPath: '/app/bibliotheque'
+      preLoaderRoute: typeof AppBibliothequeRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/app/contributions': {
+      id: '/app/contributions'
+      path: '/contributions'
+      fullPath: '/app/contributions'
+      preLoaderRoute: typeof AppContributionsRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/app/etudiants': {
       id: '/app/etudiants'
       path: '/etudiants'
       fullPath: '/app/etudiants'
       preLoaderRoute: typeof AppEtudiantsRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/app/lecture': {
+      id: '/app/lecture'
+      path: '/lecture'
+      fullPath: '/app/lecture'
+      preLoaderRoute: typeof AppLectureRouteImport
       parentRoute: typeof AppRouteRoute
     }
     '/app/maisons': {
@@ -164,14 +227,20 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppRouteRouteChildren {
+  AppBibliothequeRoute: typeof AppBibliothequeRoute
+  AppContributionsRoute: typeof AppContributionsRoute
   AppEtudiantsRoute: typeof AppEtudiantsRoute
+  AppLectureRoute: typeof AppLectureRoute
   AppMaisonsRoute: typeof AppMaisonsRoute
   AppProfilRoute: typeof AppProfilRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
+  AppBibliothequeRoute: AppBibliothequeRoute,
+  AppContributionsRoute: AppContributionsRoute,
   AppEtudiantsRoute: AppEtudiantsRoute,
+  AppLectureRoute: AppLectureRoute,
   AppMaisonsRoute: AppMaisonsRoute,
   AppProfilRoute: AppProfilRoute,
   AppIndexRoute: AppIndexRoute,

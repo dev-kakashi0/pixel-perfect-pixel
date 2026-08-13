@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { CheckCircle2, Clock, Home, MapPin, Users } from "lucide-react";
+import { BookOpen, CheckCircle2, Clock, Home, MapPin, Users, Wallet } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth, roleLabels, statutLabels } from "@/lib/auth";
 import { Badge } from "@/components/ui/badge";
@@ -45,13 +45,19 @@ function Dashboard() {
   const { data } = useQuery({
     queryKey: ["dashboard", isAdmin, managedHouseId],
     queryFn: async () => {
-      const [profilesRes, housesRes] = await Promise.all([
+      const moisCourant = new Date().toISOString().slice(0, 7);
+      const depuis = new Date(Date.now() - 6 * 86400000).toISOString().slice(0, 10);
+      const [profilesRes, housesRes, contribRes, logsRes] = await Promise.all([
         supabase.from("profiles").select("id, statut, house_id"),
         supabase.from("houses").select("id, nom, ville"),
+        supabase.from("contributions").select("student_id, paye").eq("mois", moisCourant),
+        supabase.from("reading_logs").select("student_id, pages_lues, date").gte("date", depuis),
       ]);
       return {
         profiles: profilesRes.data ?? [],
         houses: housesRes.data ?? [],
+        contributions: contribRes.data ?? [],
+        logs: logsRes.data ?? [],
       };
     },
   });
@@ -60,6 +66,18 @@ function Dashboard() {
   const houses = data?.houses ?? [];
   const enAttente = profiles.filter((p) => p.statut === "en_attente").length;
   const valides = profiles.filter((p) => p.statut === "valide").length;
+  const contributions = data?.contributions ?? [];
+  const logs = data?.logs ?? [];
+  const tauxContribution = profiles.length
+    ? Math.round((contributions.filter((c) => c.paye).length / profiles.length) * 100)
+    : 0;
+  const tauxLecture = profiles.length
+    ? Math.round((logs.filter((l) => l.pages_lues > 0).length / (profiles.length * 7)) * 100)
+    : 0;
+  const parMaison = houses.map((h) => ({
+    ...h,
+    actifs: profiles.filter((p) => p.house_id === h.id && p.statut === "valide").length,
+  }));
   const maMaison = houses.find((h) => h.id === (managedHouseId ?? profile?.house_id));
 
   return (
@@ -133,14 +151,39 @@ function Dashboard() {
         </div>
       )}
 
-      <div className="surface-card p-5">
-        <h2 className="text-lg font-semibold">Prochaines étapes</h2>
-        <ul className="mt-2 list-inside list-disc text-sm text-muted-foreground">
-          <li>Bibliothèque et suivi de lecture quotidien</li>
-          <li>Contributions mensuelles de 10 000 FCFA</li>
-          <li>Statistiques détaillées par maison</li>
-        </ul>
-      </div>
+      {isAdmin && (
+        <>
+          <div className="grid grid-cols-2 gap-3">
+            <StatCard
+              icon={Wallet}
+              label="Contributions du mois"
+              value={`${tauxContribution}%`}
+              color="bg-brand-orange"
+            />
+            <StatCard
+              icon={BookOpen}
+              label="Lecture (7 derniers jours)"
+              value={`${tauxLecture}%`}
+              color="bg-brand-green"
+            />
+          </div>
+
+          <div className="surface-card p-5">
+            <h2 className="text-lg font-semibold">Étudiants actifs par maison</h2>
+            <ul className="mt-3 space-y-2 text-sm">
+              {parMaison.map((h) => (
+                <li key={h.id} className="flex items-center justify-between border-b pb-2">
+                  <span>
+                    <span className="font-medium">{h.nom}</span>
+                    <span className="block text-xs text-muted-foreground">{h.ville}</span>
+                  </span>
+                  <span className="font-semibold">{h.actifs}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </>
+      )}
     </div>
   );
 }
