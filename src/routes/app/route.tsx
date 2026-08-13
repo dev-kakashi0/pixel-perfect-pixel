@@ -103,14 +103,14 @@ function AppLayout() {
       </main>
 
       <nav className="fixed inset-x-0 bottom-0 border-t bg-card/95 backdrop-blur">
-        <div className="mx-auto flex max-w-4xl">
+        <div className="mx-auto flex max-w-4xl overflow-x-auto">
           {nav.map((item) => {
             const active = pathname === item.to;
             return (
               <Link
                 key={item.to}
                 to={item.to}
-                className={`flex flex-1 flex-col items-center gap-1 py-3 text-[11px] font-medium transition-colors ${
+                className={`flex min-w-[68px] flex-1 flex-col items-center gap-1 py-3 text-[11px] font-medium transition-colors ${
                   active ? "text-foreground" : "text-muted-foreground"
                 }`}
               >
