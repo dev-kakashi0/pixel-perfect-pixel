@@ -56,29 +56,48 @@ function StatCard({
 
 function Dashboard() {
   const { profile, roles, isAdmin, isResponsable, managedHouseId } = useAuth();
+  const [anneeChoisie, setAnneeChoisie] = useState<string | null>(null);
+
+  const { data: annees } = useQuery({
+    queryKey: ["academic_years"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("academic_years")
+        .select("id, label, active")
+        .order("label", { ascending: false });
+      return (data ?? []) as { id: string; label: string; active: boolean }[];
+    },
+  });
+
+  const anneeActive = annees?.find((a) => a.active)?.label ?? anneeAcademiqueCourante();
+  const anneeCourante = anneeChoisie ?? anneeActive;
+  const historique = anneeCourante !== anneeActive;
 
   const { data } = useQuery({
     queryKey: ["dashboard", isAdmin, managedHouseId],
     queryFn: async () => {
       const moisCourant = new Date().toISOString().slice(0, 7);
       const depuis = new Date(Date.now() - 6 * 86400000).toISOString().slice(0, 10);
-      const [profilesRes, housesRes, contribRes, logsRes] = await Promise.all([
+      const [profilesRes, housesRes, contribRes, logsRes, assignRes] = await Promise.all([
         supabase.from("profiles").select("id, statut, house_id"),
         supabase.from("houses").select("id, nom, ville"),
         supabase.from("contributions").select("student_id, paye").eq("mois", moisCourant),
         supabase.from("reading_logs").select("student_id, pages_lues, date").gte("date", depuis),
+        supabase.from("house_assignments").select("profile_id, house_id, annee_academique"),
       ]);
       return {
         profiles: profilesRes.data ?? [],
         houses: housesRes.data ?? [],
         contributions: contribRes.data ?? [],
         logs: logsRes.data ?? [],
+        assignments: assignRes.data ?? [],
       };
     },
   });
 
   const profiles = data?.profiles ?? [];
   const houses = data?.houses ?? [];
+  const assignments = data?.assignments ?? [];
   const enAttente = profiles.filter((p) => p.statut === "en_attente").length;
   const valides = profiles.filter((p) => p.statut === "valide").length;
   const contributions = data?.contributions ?? [];
@@ -89,11 +108,20 @@ function Dashboard() {
   const tauxLecture = profiles.length
     ? Math.round((logs.filter((l) => l.pages_lues > 0).length / (profiles.length * 7)) * 100)
     : 0;
+  const valideIds = new Set(profiles.filter((p) => p.statut === "valide").map((p) => p.id));
   const parMaison = houses.map((h) => ({
     ...h,
-    actifs: profiles.filter((p) => p.house_id === h.id && p.statut === "valide").length,
+    actifs: historique
+      ? assignments.filter(
+          (a) =>
+            a.house_id === h.id &&
+            a.annee_academique === anneeCourante &&
+            valideIds.has(a.profile_id),
+        ).length
+      : profiles.filter((p) => p.house_id === h.id && p.statut === "valide").length,
   }));
   const maMaison = houses.find((h) => h.id === (managedHouseId ?? profile?.house_id));
+
 
   return (
     <div className="space-y-6">
