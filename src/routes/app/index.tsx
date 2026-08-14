@@ -1,10 +1,21 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { BookOpen, CheckCircle2, Clock, Home, MapPin, Users, Wallet } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth, roleLabels, statutLabels } from "@/lib/auth";
 import { anneeAcademiqueCourante } from "@/lib/annee";
 import { Badge } from "@/components/ui/badge";
+import { NotificationsPanel } from "@/components/notifications-panel";
+import { Annonces } from "@/components/annonces";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 
 export const Route = createFileRoute("/app/")({
   component: Dashboard,
