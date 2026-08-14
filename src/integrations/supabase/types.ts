@@ -175,6 +175,39 @@ export type Database = {
           },
         ]
       }
+      events: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          date_debut: string
+          date_fin: string | null
+          description: string | null
+          id: string
+          lieu: string | null
+          titre: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          date_debut: string
+          date_fin?: string | null
+          description?: string | null
+          id?: string
+          lieu?: string | null
+          titre: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          date_debut?: string
+          date_fin?: string | null
+          description?: string | null
+          id?: string
+          lieu?: string | null
+          titre?: string
+        }
+        Relationships: []
+      }
       house_assignments: {
         Row: {
           academic_year_id: string | null
@@ -293,6 +326,7 @@ export type Database = {
           id: string
           nom: string
           origine: string | null
+          photo_url: string | null
           prenom: string
           statut: Database["public"]["Enums"]["profile_status"]
           telephone: string | null
@@ -310,6 +344,7 @@ export type Database = {
           id: string
           nom?: string
           origine?: string | null
+          photo_url?: string | null
           prenom?: string
           statut?: Database["public"]["Enums"]["profile_status"]
           telephone?: string | null
@@ -327,6 +362,7 @@ export type Database = {
           id?: string
           nom?: string
           origine?: string | null
+          photo_url?: string | null
           prenom?: string
           statut?: Database["public"]["Enums"]["profile_status"]
           telephone?: string | null
