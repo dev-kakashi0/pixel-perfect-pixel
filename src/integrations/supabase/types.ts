@@ -14,6 +14,57 @@ export type Database = {
   }
   public: {
     Tables: {
+      academic_years: {
+        Row: {
+          active: boolean
+          created_at: string
+          date_debut: string
+          date_fin: string
+          id: string
+          label: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          date_debut: string
+          date_fin: string
+          id?: string
+          label: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          date_debut?: string
+          date_fin?: string
+          id?: string
+          label?: string
+        }
+        Relationships: []
+      }
+      announcements: {
+        Row: {
+          contenu: string
+          created_at: string
+          created_by: string | null
+          id: string
+          titre: string
+        }
+        Insert: {
+          contenu: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          titre: string
+        }
+        Update: {
+          contenu?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          titre?: string
+        }
+        Relationships: []
+      }
       book_assignments: {
         Row: {
           annee_integration: number | null
@@ -126,6 +177,7 @@ export type Database = {
       }
       house_assignments: {
         Row: {
+          academic_year_id: string | null
           annee_academique: string
           created_at: string
           house_id: string
@@ -133,6 +185,7 @@ export type Database = {
           profile_id: string
         }
         Insert: {
+          academic_year_id?: string | null
           annee_academique: string
           created_at?: string
           house_id: string
@@ -140,6 +193,7 @@ export type Database = {
           profile_id: string
         }
         Update: {
+          academic_year_id?: string | null
           annee_academique?: string
           created_at?: string
           house_id?: string
@@ -147,6 +201,13 @@ export type Database = {
           profile_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "house_assignments_academic_year_id_fkey"
+            columns: ["academic_year_id"]
+            isOneToOne: false
+            referencedRelation: "academic_years"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "house_assignments_house_id_fkey"
             columns: ["house_id"]
@@ -187,6 +248,36 @@ export type Database = {
           id?: string
           nom?: string
           ville?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          cle: string | null
+          created_at: string
+          id: string
+          lue: boolean
+          message: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          cle?: string | null
+          created_at?: string
+          id?: string
+          lue?: boolean
+          message: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          cle?: string | null
+          created_at?: string
+          id?: string
+          lue?: boolean
+          message?: string
+          type?: string
+          user_id?: string
         }
         Relationships: []
       }
