@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Home } from "lucide-react";
+import { Home, MessageCircle, Phone } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { anneeAcademiqueCourante } from "@/lib/annee";
 import { Badge } from "@/components/ui/badge";
+import { UserAvatar } from "@/components/user-avatar";
 
 export const Route = createFileRoute("/app/maisons")({
   component: MaisonsPage,
@@ -29,16 +30,22 @@ function MaisonsPage() {
   const { data, isLoading } = useQuery({
     queryKey: ["maisons"],
     queryFn: async () => {
-      const [housesRes, profilesRes] = await Promise.all([
+      const [housesRes, profilesRes, rolesRes] = await Promise.all([
         supabase.from("houses").select("*").order("ville").order("nom"),
-        supabase.from("profiles").select("id, house_id, statut"),
+        supabase.from("profiles").select("id, house_id, statut, prenom, nom, telephone, photo_url"),
+        supabase.from("user_roles").select("user_id, house_id").eq("role", "responsable"),
       ]);
-      return { houses: housesRes.data ?? [], profiles: profilesRes.data ?? [] };
+      return {
+        houses: housesRes.data ?? [],
+        profiles: profilesRes.data ?? [],
+        responsables: rolesRes.data ?? [],
+      };
     },
   });
 
   const houses = data?.houses ?? [];
   const profiles = data?.profiles ?? [];
+  const responsables = data?.responsables ?? [];
 
   return (
     <div className="space-y-5">
@@ -81,6 +88,45 @@ function MaisonsPage() {
               <p className="mt-3 text-sm text-muted-foreground">
                 {count} / {h.capacite} résidents enregistrés
               </p>
+              {(() => {
+                const resp = responsables.find((r) => r.house_id === h.id);
+                const fiche = resp ? profiles.find((p) => p.id === resp.user_id) : undefined;
+                if (!fiche || !(mine || isAdmin)) return null;
+                const tel = fiche.telephone?.replace(/[^0-9+]/g, "") ?? "";
+                return (
+                  <div className="mt-3 flex items-center gap-3 rounded-xl bg-muted/60 p-3">
+                    <UserAvatar path={fiche.photo_url} nom={fiche.prenom} className="h-10 w-10" />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                        Responsable
+                      </p>
+                      <p className="truncate text-sm font-medium">
+                        {fiche.prenom} {fiche.nom}
+                      </p>
+                    </div>
+                    {tel && (
+                      <div className="flex gap-2">
+                        <a
+                          href={`tel:${tel}`}
+                          aria-label={`Appeler ${fiche.prenom}`}
+                          className="icon-chip h-9 w-9 bg-brand-blue text-primary-foreground"
+                        >
+                          <Phone className="h-4 w-4" />
+                        </a>
+                        <a
+                          href={`https://wa.me/${tel.replace(/^\+/, "")}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          aria-label={`WhatsApp ${fiche.prenom}`}
+                          className="icon-chip h-9 w-9 bg-brand-green text-primary-foreground"
+                        >
+                          <MessageCircle className="h-4 w-4" />
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
               {mine && <Badge className="mt-3">Ma maison</Badge>}
             </div>
           );
