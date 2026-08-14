@@ -17,7 +17,9 @@ export type Profile = {
   annee_integration: number | null;
   telephone: string | null;
   ville: "Lomé" | "Kara" | null;
+  photo_url: string | null;
   statut: "en_attente" | "valide" | "refuse";
+
 };
 
 type RoleRow = { role: AppRole; house_id: string | null };
