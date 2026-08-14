@@ -232,23 +232,27 @@ function Dashboard() {
 
       {isAdmin && (
         <>
-          <div className="grid grid-cols-2 gap-3">
-            <StatCard
-              icon={Wallet}
-              label="Contributions du mois"
-              value={`${tauxContribution}%`}
-              color="bg-brand-orange"
-            />
-            <StatCard
-              icon={BookOpen}
-              label="Lecture (7 derniers jours)"
-              value={`${tauxLecture}%`}
-              color="bg-brand-green"
-            />
-          </div>
+          {!historique && (
+            <div className="grid grid-cols-2 gap-3">
+              <StatCard
+                icon={Wallet}
+                label="Contributions du mois"
+                value={`${tauxContribution}%`}
+                color="bg-brand-orange"
+              />
+              <StatCard
+                icon={BookOpen}
+                label="Lecture (7 derniers jours)"
+                value={`${tauxLecture}%`}
+                color="bg-brand-green"
+              />
+            </div>
+          )}
 
           <div className="surface-card p-5">
-            <h2 className="text-lg font-semibold">Étudiants actifs par maison</h2>
+            <h2 className="text-lg font-semibold">
+              Étudiants actifs par maison ({anneeCourante})
+            </h2>
             <ul className="mt-3 space-y-2 text-sm">
               {parMaison.map((h) => (
                 <li key={h.id} className="flex items-center justify-between border-b pb-2">
@@ -263,6 +267,9 @@ function Dashboard() {
           </div>
         </>
       )}
+
+      <Annonces />
     </div>
+
   );
 }
