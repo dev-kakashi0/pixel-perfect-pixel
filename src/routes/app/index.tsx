@@ -128,9 +128,8 @@ function Dashboard() {
       <div>
         <h1 className="text-2xl font-bold">Bonjour {profile?.prenom || ""} 👋</h1>
         <div className="mt-2 flex flex-wrap gap-2">
-          <Badge className="bg-brand-blue text-primary-foreground">
-            Année {anneeAcademiqueCourante()}
-          </Badge>
+          <Badge className="bg-brand-blue text-primary-foreground">Année {anneeCourante}</Badge>
+
           {roles.map((r) => (
             <Badge key={r.role} variant="secondary">
               {roleLabels[r.role]}
