@@ -14,6 +14,57 @@ export type Database = {
   }
   public: {
     Tables: {
+      academic_years: {
+        Row: {
+          active: boolean
+          created_at: string
+          date_debut: string
+          date_fin: string
+          id: string
+          label: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          date_debut: string
+          date_fin: string
+          id?: string
+          label: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          date_debut?: string
+          date_fin?: string
+          id?: string
+          label?: string
+        }
+        Relationships: []
+      }
+      announcements: {
+        Row: {
+          contenu: string
+          created_at: string
+          created_by: string | null
+          id: string
+          titre: string
+        }
+        Insert: {
+          contenu: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          titre: string
+        }
+        Update: {
+          contenu?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          titre?: string
+        }
+        Relationships: []
+      }
       book_assignments: {
         Row: {
           annee_integration: number | null
@@ -124,8 +175,42 @@ export type Database = {
           },
         ]
       }
+      events: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          date_debut: string
+          date_fin: string | null
+          description: string | null
+          id: string
+          lieu: string | null
+          titre: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          date_debut: string
+          date_fin?: string | null
+          description?: string | null
+          id?: string
+          lieu?: string | null
+          titre: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          date_debut?: string
+          date_fin?: string | null
+          description?: string | null
+          id?: string
+          lieu?: string | null
+          titre?: string
+        }
+        Relationships: []
+      }
       house_assignments: {
         Row: {
+          academic_year_id: string | null
           annee_academique: string
           created_at: string
           house_id: string
@@ -133,6 +218,7 @@ export type Database = {
           profile_id: string
         }
         Insert: {
+          academic_year_id?: string | null
           annee_academique: string
           created_at?: string
           house_id: string
@@ -140,6 +226,7 @@ export type Database = {
           profile_id: string
         }
         Update: {
+          academic_year_id?: string | null
           annee_academique?: string
           created_at?: string
           house_id?: string
@@ -147,6 +234,13 @@ export type Database = {
           profile_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "house_assignments_academic_year_id_fkey"
+            columns: ["academic_year_id"]
+            isOneToOne: false
+            referencedRelation: "academic_years"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "house_assignments_house_id_fkey"
             columns: ["house_id"]
@@ -190,6 +284,36 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          cle: string | null
+          created_at: string
+          id: string
+          lue: boolean
+          message: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          cle?: string | null
+          created_at?: string
+          id?: string
+          lue?: boolean
+          message: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          cle?: string | null
+          created_at?: string
+          id?: string
+          lue?: boolean
+          message?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           age: number | null
@@ -202,6 +326,7 @@ export type Database = {
           id: string
           nom: string
           origine: string | null
+          photo_url: string | null
           prenom: string
           statut: Database["public"]["Enums"]["profile_status"]
           telephone: string | null
@@ -219,6 +344,7 @@ export type Database = {
           id: string
           nom?: string
           origine?: string | null
+          photo_url?: string | null
           prenom?: string
           statut?: Database["public"]["Enums"]["profile_status"]
           telephone?: string | null
@@ -236,6 +362,7 @@ export type Database = {
           id?: string
           nom?: string
           origine?: string | null
+          photo_url?: string | null
           prenom?: string
           statut?: Database["public"]["Enums"]["profile_status"]
           telephone?: string | null

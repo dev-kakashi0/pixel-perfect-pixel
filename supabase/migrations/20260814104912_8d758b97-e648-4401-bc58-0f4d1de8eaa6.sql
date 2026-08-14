@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.manages_student(uuid, uuid) FROM authenticated, anon, public;
