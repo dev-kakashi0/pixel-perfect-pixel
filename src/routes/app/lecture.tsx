@@ -222,7 +222,11 @@ function LecturePage() {
 
       {(isAdmin || isResponsable) && (
         <div className="surface-card p-5">
-          <h2 className="text-lg font-semibold">Suivi des étudiants (7 derniers jours)</h2>
+          <h2 className="text-lg font-semibold">
+            {isAdmin
+              ? "Suivi de tous les étudiants (7 derniers jours)"
+              : "Suivi de ma maison (7 derniers jours)"}
+          </h2>
           <ul className="mt-3 space-y-2 text-sm">
             {statsEtudiants.map((s) => (
               <li key={s.id} className="flex items-center justify-between gap-3 border-b pb-2">

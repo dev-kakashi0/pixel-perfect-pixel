@@ -111,9 +111,7 @@ function ContributionsPage() {
   const maLigne = ligne(user?.id ?? "");
   const etudiant = !isAdmin && !isResponsable;
 
-  const maisonsAffichees = isAdmin
-    ? houses
-    : houses.filter((h) => h.id === managedHouseId || h.id === null);
+  const maisonsAffichees = isAdmin ? houses : houses.filter((h) => h.id === managedHouseId);
 
   const totalMois = profiles.length
     ? Math.round(
@@ -145,7 +143,8 @@ function ContributionsPage() {
         </Select>
         {(isAdmin || isResponsable) && (
           <p className="mt-3 text-sm text-muted-foreground">
-            Taux de contribution : <span className="font-semibold text-foreground">{totalMois}%</span>
+            {isAdmin ? "Taux de contribution — toute l'ONG" : "Taux de contribution — ma maison"} :{" "}
+            <span className="font-semibold text-foreground">{totalMois}%</span>
           </p>
         )}
       </div>

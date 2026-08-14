@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Home } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
+import { anneeAcademiqueCourante } from "@/lib/annee";
 import { Badge } from "@/components/ui/badge";
 
 export const Route = createFileRoute("/app/maisons")({
@@ -42,6 +43,9 @@ function MaisonsPage() {
   return (
     <div className="space-y-5">
       <div>
+        <Badge variant="outline" className="mb-2">
+          Année {anneeAcademiqueCourante()}
+        </Badge>
         <h1 className="text-2xl font-bold">Les maisons</h1>
         <p className="text-sm text-muted-foreground">
           {isAdmin

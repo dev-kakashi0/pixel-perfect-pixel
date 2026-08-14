@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth, statutLabels, type AppRole } from "@/lib/auth";
+import { anneeAcademiqueCourante } from "@/lib/annee";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -162,6 +163,9 @@ function EtudiantsPage() {
   return (
     <div className="space-y-5">
       <div>
+        <Badge variant="outline" className="mb-2">
+          Année {anneeAcademiqueCourante()}
+        </Badge>
         <h1 className="text-2xl font-bold">Étudiants</h1>
         <p className="text-sm text-muted-foreground">
           {isAdmin ? "Tous les résidents de l'ONG, Lomé et Kara" : "Les résidents de votre maison"}

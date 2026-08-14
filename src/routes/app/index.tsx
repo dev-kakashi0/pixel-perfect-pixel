@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { BookOpen, CheckCircle2, Clock, Home, MapPin, Users, Wallet } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth, roleLabels, statutLabels } from "@/lib/auth";
+import { anneeAcademiqueCourante } from "@/lib/annee";
 import { Badge } from "@/components/ui/badge";
 
 export const Route = createFileRoute("/app/")({
@@ -22,11 +23,13 @@ function StatCard({
   label,
   value,
   color,
+  hint,
 }: {
   icon: typeof Users;
   label: string;
   value: string | number;
   color: string;
+  hint?: string;
 }) {
   return (
     <div className="surface-card p-4">
@@ -35,6 +38,7 @@ function StatCard({
       </span>
       <p className="mt-3 text-2xl font-bold">{value}</p>
       <p className="text-xs text-muted-foreground">{label}</p>
+      {hint && <p className="mt-0.5 text-[11px] text-muted-foreground/80">{hint}</p>}
     </div>
   );
 }
@@ -85,6 +89,9 @@ function Dashboard() {
       <div>
         <h1 className="text-2xl font-bold">Bonjour {profile?.prenom || ""} 👋</h1>
         <div className="mt-2 flex flex-wrap gap-2">
+          <Badge className="bg-brand-blue text-primary-foreground">
+            Année {anneeAcademiqueCourante()}
+          </Badge>
           {roles.map((r) => (
             <Badge key={r.role} variant="secondary">
               {roleLabels[r.role]}
@@ -122,17 +129,25 @@ function Dashboard() {
           <>
             <StatCard
               icon={Users}
-              label="Résidents visibles"
+              label={isAdmin ? "Résidents de l'ONG" : "Résidents de ma maison"}
               value={profiles.length}
               color="bg-brand-pink"
+              hint={isAdmin ? "Lomé et Kara" : "Ma maison uniquement"}
             />
             <StatCard
               icon={CheckCircle2}
               label="Comptes validés"
               value={valides}
               color="bg-brand-green"
+              hint={isAdmin ? "Sur toute l'ONG" : "Dans ma maison"}
             />
-            <StatCard icon={Clock} label="En attente" value={enAttente} color="bg-brand-orange" />
+            <StatCard
+              icon={Clock}
+              label="En attente"
+              value={enAttente}
+              color="bg-brand-orange"
+              hint={isAdmin ? "Sur toute l'ONG" : "Dans ma maison"}
+            />
           </>
         )}
         <StatCard
