@@ -149,6 +149,32 @@ function Dashboard() {
         </div>
       </div>
 
+      {isAdmin && (annees?.length ?? 0) > 0 && (
+        <div className="surface-card flex flex-wrap items-center gap-3 p-4">
+          <span className="text-sm font-medium">Année académique consultée</span>
+          <Select value={anneeCourante} onValueChange={setAnneeChoisie}>
+            <SelectTrigger className="w-40">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {annees?.map((a) => (
+                <SelectItem key={a.id} value={a.label}>
+                  {a.label}
+                  {a.active ? " (active)" : ""}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {historique && (
+            <Badge variant="outline">Consultation en lecture seule</Badge>
+          )}
+        </div>
+      )}
+
+      <NotificationsPanel />
+
+
+
       {profile?.statut === "en_attente" && (
         <div className="surface-card border-l-4 border-l-primary p-4">
           <p className="text-sm font-medium">Compte en attente de validation</p>
