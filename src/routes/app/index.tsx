@@ -219,6 +219,18 @@ function Dashboard() {
 
       <NotificationsPanel />
 
+      <div className="surface-card flex items-center gap-3 p-4">
+        <span className="icon-chip h-11 w-11 bg-brand-orange text-primary-foreground">
+          <Flame className="h-5 w-5" />
+        </span>
+        <div>
+          <p className="text-xl font-bold">
+            {streak} <span className="text-sm font-medium text-muted-foreground">jour(s)</span>
+          </p>
+          <p className="text-xs text-muted-foreground">Ma série de lecture — {libelleStreak(streak)}</p>
+        </div>
+      </div>
+
 
 
       {profile?.statut === "en_attente" && (
