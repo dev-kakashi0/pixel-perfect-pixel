@@ -122,6 +122,29 @@ function ContributionsPage() {
       )
     : 0;
 
+  const exporterCsv = () => {
+    const cibles = isAdmin
+      ? profiles
+      : profiles.filter((p) => p.house_id !== null && p.house_id === managedHouseId);
+    telechargerCsv(
+      `cotisations-${moisChoisi}`,
+      ["Nom", "Prénom", "Maison", "Ville", "Mois", "Montant (FCFA)", "Payé"],
+      cibles.map((p) => {
+        const c = ligne(p.id);
+        const h = houses.find((x) => x.id === p.house_id);
+        return [
+          p.nom,
+          p.prenom,
+          h?.nom ?? "Sans maison",
+          h?.ville ?? "",
+          labelMois(moisChoisi),
+          c?.montant ?? 10000,
+          c?.paye ? "Oui" : "Non",
+        ];
+      }),
+    );
+  };
+
   return (
     <div className="space-y-6">
       <div>
