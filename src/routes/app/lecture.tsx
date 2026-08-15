@@ -257,6 +257,16 @@ function LecturePage() {
               ? "Suivi de tous les étudiants (7 derniers jours)"
               : "Suivi de ma maison (7 derniers jours)"}
           </h2>
+          <div className="mt-3 flex flex-wrap gap-2 print:hidden">
+            <Button variant="secondary" size="sm" className="rounded-full" onClick={exporterCsv}>
+              <Download className="mr-1 h-4 w-4" />
+              Export Excel (CSV)
+            </Button>
+            <Button variant="outline" size="sm" className="rounded-full" onClick={imprimerPdf}>
+              <Printer className="mr-1 h-4 w-4" />
+              Export PDF
+            </Button>
+          </div>
           <ul className="mt-3 space-y-2 text-sm">
             {statsEtudiants.map((s) => (
               <li key={s.id} className="flex items-center justify-between gap-3 border-b pb-2">
