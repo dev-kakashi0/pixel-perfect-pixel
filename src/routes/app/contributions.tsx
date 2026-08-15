@@ -144,10 +144,22 @@ function ContributionsPage() {
           </SelectContent>
         </Select>
         {(isAdmin || isResponsable) && (
-          <p className="mt-3 text-sm text-muted-foreground">
-            {isAdmin ? "Taux de contribution — toute l'ONG" : "Taux de contribution — ma maison"} :{" "}
-            <span className="font-semibold text-foreground">{totalMois}%</span>
-          </p>
+          <>
+            <p className="mt-3 text-sm text-muted-foreground">
+              {isAdmin ? "Taux de contribution — toute l'ONG" : "Taux de contribution — ma maison"} :{" "}
+              <span className="font-semibold text-foreground">{totalMois}%</span>
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2 print:hidden">
+              <Button variant="secondary" size="sm" className="rounded-full" onClick={exporterCsv}>
+                <Download className="mr-1 h-4 w-4" />
+                Export Excel (CSV)
+              </Button>
+              <Button variant="outline" size="sm" className="rounded-full" onClick={imprimerPdf}>
+                <Printer className="mr-1 h-4 w-4" />
+                Export PDF
+              </Button>
+            </div>
+          </>
         )}
       </div>
 
