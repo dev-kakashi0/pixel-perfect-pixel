@@ -168,6 +168,21 @@ function LecturePage() {
     })
     .sort((a, b) => b.pages - a.pages);
 
+  const exporterCsv = () => {
+    telechargerCsv(
+      `lecture-7-jours-${aujourdhui()}`,
+      ["Nom", "Prénom", "Maison", "Jours lus / 7", "Pages lues", "Taux (%)"],
+      statsEtudiants.map((s) => [
+        s.nom,
+        s.prenom,
+        houses.find((h) => h.id === s.house_id)?.nom ?? "Sans maison",
+        s.jours,
+        s.pages,
+        s.taux,
+      ]),
+    );
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -176,6 +191,26 @@ function LecturePage() {
           Un petit pas chaque jour : notez vos pages lues.
         </p>
       </div>
+
+      <div className="surface-card flex items-center gap-3 p-4">
+        <span className="icon-chip h-11 w-11 bg-brand-orange text-primary-foreground">
+          <Flame className="h-5 w-5" />
+        </span>
+        <div>
+          <p className="text-xl font-bold">
+            {streak} <span className="text-sm font-medium text-muted-foreground">jour(s)</span>
+          </p>
+          <p className="text-xs text-muted-foreground">Ma série de lecture — {libelleStreak(streak)}</p>
+        </div>
+      </div>
+
+      {estHorsLigne() && (
+        <div className="surface-card flex items-center gap-2 border-l-4 border-l-brand-orange p-4 text-sm">
+          <CloudOff className="h-4 w-4 shrink-0" />
+          Mode hors ligne : tes lectures sont enregistrées et seront envoyées dès le retour du réseau.
+        </div>
+      )}
+
 
       <div className="surface-card space-y-3 p-5">
         <h2 className="flex items-center gap-2 text-lg font-semibold">
