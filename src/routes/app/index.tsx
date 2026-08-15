@@ -133,6 +133,29 @@ function Dashboard() {
   }));
   const maMaison = houses.find((h) => h.id === (managedHouseId ?? profile?.house_id));
 
+  const streak = calculerStreak(
+    mesLogs.map((l) => ({ date: l.date, pages_lues: l.pages_lues })),
+  );
+
+  const classement = houses
+    .map((h) => {
+      const membres = profiles.filter((p) => p.house_id === h.id && p.statut === "valide");
+      const jours = logs.filter(
+        (l) => l.pages_lues > 0 && membres.some((m) => m.id === l.student_id),
+      ).length;
+      return {
+        ...h,
+        membres: membres.length,
+        pages: logs
+          .filter((l) => membres.some((m) => m.id === l.student_id))
+          .reduce((s, l) => s + l.pages_lues, 0),
+        taux: membres.length ? Math.round((jours / (membres.length * 7)) * 100) : 0,
+      };
+    })
+    .filter((h) => h.membres > 0)
+    .sort((a, b) => b.taux - a.taux || b.pages - a.pages);
+
+  const medailles = ["🥇", "🥈", "🥉"];
 
   return (
     <div className="space-y-6">
