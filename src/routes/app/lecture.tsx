@@ -78,11 +78,16 @@ function LecturePage() {
   const books = data?.books ?? [];
   const profiles = data?.profiles ?? [];
   const houses = data?.houses ?? [];
-  const mesLivres = (data?.assignments ?? [])
+  const coran = books.find((b) => b.titre.toLowerCase() === "coran");
+  const livresAssignes = (data?.assignments ?? [])
     .filter((a) => a.student_id === user?.id)
     .sort((a, b) => a.ordre_lecture - b.ordre_lecture)
     .map((a) => books.find((b) => b.id === a.book_id))
     .filter(Boolean) as { id: string; titre: string }[];
+  const mesLivres = [
+    ...(coran ? [coran] : []),
+    ...livresAssignes.filter((b) => b.id !== coran?.id),
+  ];
 
   const mesLogs = logs.filter((l) => l.student_id === user?.id);
   const dujour = mesLogs.find((l) => l.date === aujourdhui());
@@ -163,10 +168,10 @@ function LecturePage() {
         )}
         {mesLivres.length > 0 && (
           <div>
-            <Label>Livre en cours</Label>
+            <Label>Coran ou livre en cours</Label>
             <Select value={bookId} onValueChange={setBookId}>
               <SelectTrigger>
-                <SelectValue placeholder="Choisir un livre" />
+                <SelectValue placeholder="Choisir le Coran ou un livre" />
               </SelectTrigger>
               <SelectContent>
                 {mesLivres.map((b) => (
