@@ -102,6 +102,19 @@ function LecturePage() {
 
   const streak = useMemo(() => calculerStreak(mesLogs), [mesLogs]);
 
+  useEffect(() => {
+    const sync = async () => {
+      const n = await synchroniserFile();
+      if (n > 0) {
+        toast.success(`${n} lecture(s) hors ligne synchronisée(s).`);
+        void qc.invalidateQueries({ queryKey: ["lecture"] });
+      }
+    };
+    void sync();
+    window.addEventListener("online", sync);
+    return () => window.removeEventListener("online", sync);
+  }, [qc]);
+
   const enregistrer = async () => {
     if (!user) return;
     const nb = Number(pages);
