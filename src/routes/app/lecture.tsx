@@ -168,10 +168,10 @@ function LecturePage() {
         )}
         {mesLivres.length > 0 && (
           <div>
-            <Label>Livre en cours</Label>
+            <Label>Coran ou livre en cours</Label>
             <Select value={bookId} onValueChange={setBookId}>
               <SelectTrigger>
-                <SelectValue placeholder="Choisir un livre" />
+                <SelectValue placeholder="Choisir le Coran ou un livre" />
               </SelectTrigger>
               <SelectContent>
                 {mesLivres.map((b) => (
