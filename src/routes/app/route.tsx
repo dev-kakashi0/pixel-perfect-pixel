@@ -1,6 +1,16 @@
 import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { BookOpen, Home, LayoutDashboard, Library, LogOut, User, Users, Wallet } from "lucide-react";
+import {
+  BookOpen,
+  CalendarDays,
+  Home,
+  LayoutDashboard,
+  Library,
+  LogOut,
+  User,
+  Users,
+  Wallet,
+} from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { VilleGate } from "@/components/ville-gate";
@@ -57,6 +67,13 @@ function AppLayout() {
       color: "text-brand-orange",
     },
     { to: "/app/maisons", label: "Maisons", icon: Home, show: true, color: "text-brand-green" },
+    {
+      to: "/app/agenda",
+      label: "Agenda",
+      icon: CalendarDays,
+      show: true,
+      color: "text-brand-blue",
+    },
     { to: "/app/profil", label: "Profil", icon: User, show: true, color: "text-brand-orange" },
   ].filter((n) => n.show);
 

@@ -1,8 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { BookOpen } from "lucide-react";
+import { BookOpen, CloudOff, Download, Flame, Printer } from "lucide-react";
+import { telechargerCsv, imprimerPdf } from "@/lib/export";
+import { calculerStreak, libelleStreak } from "@/lib/streak";
+import { ajouterAFile, estHorsLigne, synchroniserFile } from "@/lib/offline";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
@@ -97,6 +100,21 @@ function LecturePage() {
     return logs.filter((l) => l.date >= limite);
   }, [logs]);
 
+  const streak = useMemo(() => calculerStreak(mesLogs), [mesLogs]);
+
+  useEffect(() => {
+    const sync = async () => {
+      const n = await synchroniserFile();
+      if (n > 0) {
+        toast.success(`${n} lecture(s) hors ligne synchronisée(s).`);
+        void qc.invalidateQueries({ queryKey: ["lecture"] });
+      }
+    };
+    void sync();
+    window.addEventListener("online", sync);
+    return () => window.removeEventListener("online", sync);
+  }, [qc]);
+
   const enregistrer = async () => {
     if (!user) return;
     const nb = Number(pages);
@@ -108,17 +126,24 @@ function LecturePage() {
       toast.error("Expliquez pourquoi vous n'avez pas pu lire aujourd'hui.");
       return;
     }
+    const entree = {
+      student_id: user.id,
+      book_id: bookId || null,
+      date: aujourdhui(),
+      pages_lues: nb,
+      motif_non_lecture: nb === 0 ? motif.trim() : null,
+    };
+    if (estHorsLigne()) {
+      ajouterAFile(entree);
+      setPages("");
+      setMotif("");
+      toast.success("Hors ligne : lecture enregistrée, elle sera synchronisée au retour du réseau.");
+      return;
+    }
     setSaving(true);
-    const { error } = await supabase.from("reading_logs").upsert(
-      {
-        student_id: user.id,
-        book_id: bookId || null,
-        date: aujourdhui(),
-        pages_lues: nb,
-        motif_non_lecture: nb === 0 ? motif.trim() : null,
-      },
-      { onConflict: "student_id,date" },
-    );
+    const { error } = await supabase
+      .from("reading_logs")
+      .upsert(entree, { onConflict: "student_id,date" });
     setSaving(false);
     if (error) {
       toast.error(error.message);
@@ -143,6 +168,21 @@ function LecturePage() {
     })
     .sort((a, b) => b.pages - a.pages);
 
+  const exporterCsv = () => {
+    telechargerCsv(
+      `lecture-7-jours-${aujourdhui()}`,
+      ["Nom", "Prénom", "Maison", "Jours lus / 7", "Pages lues", "Taux (%)"],
+      statsEtudiants.map((s) => [
+        s.nom,
+        s.prenom,
+        houses.find((h) => h.id === s.house_id)?.nom ?? "Sans maison",
+        s.jours,
+        s.pages,
+        s.taux,
+      ]),
+    );
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -151,6 +191,26 @@ function LecturePage() {
           Un petit pas chaque jour : notez vos pages lues.
         </p>
       </div>
+
+      <div className="surface-card flex items-center gap-3 p-4">
+        <span className="icon-chip h-11 w-11 bg-brand-orange text-primary-foreground">
+          <Flame className="h-5 w-5" />
+        </span>
+        <div>
+          <p className="text-xl font-bold">
+            {streak} <span className="text-sm font-medium text-muted-foreground">jour(s)</span>
+          </p>
+          <p className="text-xs text-muted-foreground">Ma série de lecture — {libelleStreak(streak)}</p>
+        </div>
+      </div>
+
+      {estHorsLigne() && (
+        <div className="surface-card flex items-center gap-2 border-l-4 border-l-brand-orange p-4 text-sm">
+          <CloudOff className="h-4 w-4 shrink-0" />
+          Mode hors ligne : tes lectures sont enregistrées et seront envoyées dès le retour du réseau.
+        </div>
+      )}
+
 
       <div className="surface-card space-y-3 p-5">
         <h2 className="flex items-center gap-2 text-lg font-semibold">
@@ -232,6 +292,16 @@ function LecturePage() {
               ? "Suivi de tous les étudiants (7 derniers jours)"
               : "Suivi de ma maison (7 derniers jours)"}
           </h2>
+          <div className="mt-3 flex flex-wrap gap-2 print:hidden">
+            <Button variant="secondary" size="sm" className="rounded-full" onClick={exporterCsv}>
+              <Download className="mr-1 h-4 w-4" />
+              Export Excel (CSV)
+            </Button>
+            <Button variant="outline" size="sm" className="rounded-full" onClick={imprimerPdf}>
+              <Printer className="mr-1 h-4 w-4" />
+              Export PDF
+            </Button>
+          </div>
           <ul className="mt-3 space-y-2 text-sm">
             {statsEtudiants.map((s) => (
               <li key={s.id} className="flex items-center justify-between gap-3 border-b pb-2">

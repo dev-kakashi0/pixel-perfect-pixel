@@ -2,7 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Wallet } from "lucide-react";
+import { Download, Printer, Wallet } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { telechargerCsv, imprimerPdf } from "@/lib/export";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { Badge } from "@/components/ui/badge";
@@ -120,6 +122,29 @@ function ContributionsPage() {
       )
     : 0;
 
+  const exporterCsv = () => {
+    const cibles = isAdmin
+      ? profiles
+      : profiles.filter((p) => p.house_id !== null && p.house_id === managedHouseId);
+    telechargerCsv(
+      `cotisations-${moisChoisi}`,
+      ["Nom", "Prénom", "Maison", "Ville", "Mois", "Montant (FCFA)", "Payé"],
+      cibles.map((p) => {
+        const c = ligne(p.id);
+        const h = houses.find((x) => x.id === p.house_id);
+        return [
+          p.nom,
+          p.prenom,
+          h?.nom ?? "Sans maison",
+          h?.ville ?? "",
+          labelMois(moisChoisi),
+          c?.montant ?? 10000,
+          c?.paye ? "Oui" : "Non",
+        ];
+      }),
+    );
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -142,10 +167,22 @@ function ContributionsPage() {
           </SelectContent>
         </Select>
         {(isAdmin || isResponsable) && (
-          <p className="mt-3 text-sm text-muted-foreground">
-            {isAdmin ? "Taux de contribution — toute l'ONG" : "Taux de contribution — ma maison"} :{" "}
-            <span className="font-semibold text-foreground">{totalMois}%</span>
-          </p>
+          <>
+            <p className="mt-3 text-sm text-muted-foreground">
+              {isAdmin ? "Taux de contribution — toute l'ONG" : "Taux de contribution — ma maison"} :{" "}
+              <span className="font-semibold text-foreground">{totalMois}%</span>
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2 print:hidden">
+              <Button variant="secondary" size="sm" className="rounded-full" onClick={exporterCsv}>
+                <Download className="mr-1 h-4 w-4" />
+                Export Excel (CSV)
+              </Button>
+              <Button variant="outline" size="sm" className="rounded-full" onClick={imprimerPdf}>
+                <Printer className="mr-1 h-4 w-4" />
+                Export PDF
+              </Button>
+            </div>
+          </>
         )}
       </div>
 

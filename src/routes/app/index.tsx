@@ -1,7 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { BookOpen, CheckCircle2, Clock, Home, MapPin, Users, Wallet } from "lucide-react";
+import {
+  BookOpen,
+  CheckCircle2,
+  Clock,
+  Flame,
+  Home,
+  MapPin,
+  Trophy,
+  Users,
+  Wallet,
+} from "lucide-react";
+import { calculerStreak, libelleStreak } from "@/lib/streak";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth, roleLabels, statutLabels } from "@/lib/auth";
 import { anneeAcademiqueCourante } from "@/lib/annee";
@@ -55,7 +66,7 @@ function StatCard({
 }
 
 function Dashboard() {
-  const { profile, roles, isAdmin, isResponsable, managedHouseId } = useAuth();
+  const { user, profile, roles, isAdmin, isResponsable, managedHouseId } = useAuth();
   const [anneeChoisie, setAnneeChoisie] = useState<string | null>(null);
 
   const { data: annees } = useQuery({
@@ -95,6 +106,20 @@ function Dashboard() {
     },
   });
 
+  const { data: mesLogs } = useQuery({
+    queryKey: ["mes-logs", user?.id],
+    enabled: Boolean(user?.id),
+    queryFn: async () => {
+      const depuis = new Date(Date.now() - 120 * 86400000).toISOString().slice(0, 10);
+      const { data } = await supabase
+        .from("reading_logs")
+        .select("date, pages_lues")
+        .eq("student_id", user!.id)
+        .gte("date", depuis);
+      return (data ?? []) as { date: string; pages_lues: number }[];
+    },
+  });
+
   const profiles = data?.profiles ?? [];
   const houses = data?.houses ?? [];
   const assignments = data?.assignments ?? [];
@@ -122,6 +147,27 @@ function Dashboard() {
   }));
   const maMaison = houses.find((h) => h.id === (managedHouseId ?? profile?.house_id));
 
+  const streak = calculerStreak(mesLogs ?? []);
+
+  const classement = houses
+    .map((h) => {
+      const membres = profiles.filter((p) => p.house_id === h.id && p.statut === "valide");
+      const jours = logs.filter(
+        (l) => l.pages_lues > 0 && membres.some((m) => m.id === l.student_id),
+      ).length;
+      return {
+        ...h,
+        membres: membres.length,
+        pages: logs
+          .filter((l) => membres.some((m) => m.id === l.student_id))
+          .reduce((s, l) => s + l.pages_lues, 0),
+        taux: membres.length ? Math.round((jours / (membres.length * 7)) * 100) : 0,
+      };
+    })
+    .filter((h) => h.membres > 0)
+    .sort((a, b) => b.taux - a.taux || b.pages - a.pages);
+
+  const medailles = ["🥇", "🥈", "🥉"];
 
   return (
     <div className="space-y-6">
@@ -172,6 +218,18 @@ function Dashboard() {
       )}
 
       <NotificationsPanel />
+
+      <div className="surface-card flex items-center gap-3 p-4">
+        <span className="icon-chip h-11 w-11 bg-brand-orange text-primary-foreground">
+          <Flame className="h-5 w-5" />
+        </span>
+        <div>
+          <p className="text-xl font-bold">
+            {streak} <span className="text-sm font-medium text-muted-foreground">jour(s)</span>
+          </p>
+          <p className="text-xs text-muted-foreground">Ma série de lecture — {libelleStreak(streak)}</p>
+        </div>
+      </div>
 
 
 
@@ -265,6 +323,35 @@ function Dashboard() {
               ))}
             </ul>
           </div>
+
+          {!historique && classement.length > 0 && (
+            <div className="surface-card p-5">
+              <h2 className="flex items-center gap-2 text-lg font-semibold">
+                <span className="icon-chip h-9 w-9 bg-brand-pink text-primary-foreground">
+                  <Trophy className="h-4 w-4" />
+                </span>
+                Classement des maisons (lecture, 7 jours)
+              </h2>
+              <ul className="mt-3 space-y-2 text-sm">
+                {classement.map((h, i) => (
+                  <li key={h.id} className="flex items-center justify-between gap-3 border-b pb-2">
+                    <span>
+                      <span className="font-medium">
+                        {medailles[i] ?? `${i + 1}.`} {h.nom}
+                      </span>
+                      <span className="block text-xs text-muted-foreground">
+                        {h.ville} · {h.membres} résident(s)
+                      </span>
+                    </span>
+                    <span className="text-right">
+                      <span className="font-semibold">{h.taux}%</span>
+                      <span className="block text-xs text-muted-foreground">{h.pages} pages</span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </>
       )}
 
