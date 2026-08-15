@@ -106,6 +106,20 @@ function Dashboard() {
     },
   });
 
+  const { data: mesLogs } = useQuery({
+    queryKey: ["mes-logs", user?.id],
+    enabled: Boolean(user?.id),
+    queryFn: async () => {
+      const depuis = new Date(Date.now() - 120 * 86400000).toISOString().slice(0, 10);
+      const { data } = await supabase
+        .from("reading_logs")
+        .select("date, pages_lues")
+        .eq("student_id", user!.id)
+        .gte("date", depuis);
+      return (data ?? []) as { date: string; pages_lues: number }[];
+    },
+  });
+
   const profiles = data?.profiles ?? [];
   const houses = data?.houses ?? [];
   const assignments = data?.assignments ?? [];
