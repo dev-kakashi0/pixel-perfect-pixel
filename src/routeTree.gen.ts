@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteRouteImport } from './routes/app/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppIndexRouteImport } from './routes/app/index'
+import { Route as AppAgendaRouteImport } from './routes/app/agenda'
 import { Route as AppBibliothequeRouteImport } from './routes/app/bibliotheque'
 import { Route as AppContributionsRouteImport } from './routes/app/contributions'
 import { Route as AppEtudiantsRouteImport } from './routes/app/etudiants'
@@ -38,6 +39,11 @@ const AuthRoute = AuthRouteImport.update({
 const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppAgendaRoute = AppAgendaRouteImport.update({
+  id: '/agenda',
+  path: '/agenda',
   getParentRoute: () => AppRouteRoute,
 } as any)
 const AppBibliothequeRoute = AppBibliothequeRouteImport.update({
@@ -75,6 +81,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/app/agenda': typeof AppAgendaRoute
   '/app/bibliotheque': typeof AppBibliothequeRoute
   '/app/contributions': typeof AppContributionsRoute
   '/app/etudiants': typeof AppEtudiantsRoute
@@ -86,6 +93,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/app/agenda': typeof AppAgendaRoute
   '/app/bibliotheque': typeof AppBibliothequeRoute
   '/app/contributions': typeof AppContributionsRoute
   '/app/etudiants': typeof AppEtudiantsRoute
@@ -99,6 +107,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/app': typeof AppRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/app/agenda': typeof AppAgendaRoute
   '/app/bibliotheque': typeof AppBibliothequeRoute
   '/app/contributions': typeof AppContributionsRoute
   '/app/etudiants': typeof AppEtudiantsRoute
@@ -113,6 +122,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/auth'
+    | '/app/agenda'
     | '/app/bibliotheque'
     | '/app/contributions'
     | '/app/etudiants'
@@ -124,6 +134,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/app/agenda'
     | '/app/bibliotheque'
     | '/app/contributions'
     | '/app/etudiants'
@@ -136,6 +147,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/auth'
+    | '/app/agenda'
     | '/app/bibliotheque'
     | '/app/contributions'
     | '/app/etudiants'
@@ -179,6 +191,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/app/'
       preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/app/agenda': {
+      id: '/app/agenda'
+      path: '/agenda'
+      fullPath: '/app/agenda'
+      preLoaderRoute: typeof AppAgendaRouteImport
       parentRoute: typeof AppRouteRoute
     }
     '/app/bibliotheque': {
@@ -227,6 +246,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppRouteRouteChildren {
+  AppAgendaRoute: typeof AppAgendaRoute
   AppBibliothequeRoute: typeof AppBibliothequeRoute
   AppContributionsRoute: typeof AppContributionsRoute
   AppEtudiantsRoute: typeof AppEtudiantsRoute
@@ -237,6 +257,7 @@ interface AppRouteRouteChildren {
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
+  AppAgendaRoute: AppAgendaRoute,
   AppBibliothequeRoute: AppBibliothequeRoute,
   AppContributionsRoute: AppContributionsRoute,
   AppEtudiantsRoute: AppEtudiantsRoute,
