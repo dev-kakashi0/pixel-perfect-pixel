@@ -66,7 +66,7 @@ function StatCard({
 }
 
 function Dashboard() {
-  const { profile, roles, isAdmin, isResponsable, managedHouseId } = useAuth();
+  const { user, profile, roles, isAdmin, isResponsable, managedHouseId } = useAuth();
   const [anneeChoisie, setAnneeChoisie] = useState<string | null>(null);
 
   const { data: annees } = useQuery({
