@@ -311,6 +311,35 @@ function Dashboard() {
               ))}
             </ul>
           </div>
+
+          {!historique && classement.length > 0 && (
+            <div className="surface-card p-5">
+              <h2 className="flex items-center gap-2 text-lg font-semibold">
+                <span className="icon-chip h-9 w-9 bg-brand-pink text-primary-foreground">
+                  <Trophy className="h-4 w-4" />
+                </span>
+                Classement des maisons (lecture, 7 jours)
+              </h2>
+              <ul className="mt-3 space-y-2 text-sm">
+                {classement.map((h, i) => (
+                  <li key={h.id} className="flex items-center justify-between gap-3 border-b pb-2">
+                    <span>
+                      <span className="font-medium">
+                        {medailles[i] ?? `${i + 1}.`} {h.nom}
+                      </span>
+                      <span className="block text-xs text-muted-foreground">
+                        {h.ville} · {h.membres} résident(s)
+                      </span>
+                    </span>
+                    <span className="text-right">
+                      <span className="font-semibold">{h.taux}%</span>
+                      <span className="block text-xs text-muted-foreground">{h.pages} pages</span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </>
       )}
 
