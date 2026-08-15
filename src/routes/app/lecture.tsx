@@ -1,8 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { BookOpen } from "lucide-react";
+import { BookOpen, CloudOff, Download, Flame, Printer } from "lucide-react";
+import { telechargerCsv, imprimerPdf } from "@/lib/export";
+import { calculerStreak, libelleStreak } from "@/lib/streak";
+import { ajouterAFile, estHorsLigne, synchroniserFile } from "@/lib/offline";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
