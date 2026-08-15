@@ -147,9 +147,7 @@ function Dashboard() {
   }));
   const maMaison = houses.find((h) => h.id === (managedHouseId ?? profile?.house_id));
 
-  const streak = calculerStreak(
-    mesLogs.map((l) => ({ date: l.date, pages_lues: l.pages_lues })),
-  );
+  const streak = calculerStreak(mesLogs ?? []);
 
   const classement = houses
     .map((h) => {
