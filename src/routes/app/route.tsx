@@ -1,6 +1,16 @@
 import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { BookOpen, Home, LayoutDashboard, Library, LogOut, User, Users, Wallet } from "lucide-react";
+import {
+  BookOpen,
+  CalendarDays,
+  Home,
+  LayoutDashboard,
+  Library,
+  LogOut,
+  User,
+  Users,
+  Wallet,
+} from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { VilleGate } from "@/components/ville-gate";
