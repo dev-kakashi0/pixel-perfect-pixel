@@ -100,6 +100,8 @@ function LecturePage() {
     return logs.filter((l) => l.date >= limite);
   }, [logs]);
 
+  const streak = useMemo(() => calculerStreak(mesLogs), [mesLogs]);
+
   const enregistrer = async () => {
     if (!user) return;
     const nb = Number(pages);
@@ -111,17 +113,24 @@ function LecturePage() {
       toast.error("Expliquez pourquoi vous n'avez pas pu lire aujourd'hui.");
       return;
     }
+    const entree = {
+      student_id: user.id,
+      book_id: bookId || null,
+      date: aujourdhui(),
+      pages_lues: nb,
+      motif_non_lecture: nb === 0 ? motif.trim() : null,
+    };
+    if (estHorsLigne()) {
+      ajouterAFile(entree);
+      setPages("");
+      setMotif("");
+      toast.success("Hors ligne : lecture enregistrée, elle sera synchronisée au retour du réseau.");
+      return;
+    }
     setSaving(true);
-    const { error } = await supabase.from("reading_logs").upsert(
-      {
-        student_id: user.id,
-        book_id: bookId || null,
-        date: aujourdhui(),
-        pages_lues: nb,
-        motif_non_lecture: nb === 0 ? motif.trim() : null,
-      },
-      { onConflict: "student_id,date" },
-    );
+    const { error } = await supabase
+      .from("reading_logs")
+      .upsert(entree, { onConflict: "student_id,date" });
     setSaving(false);
     if (error) {
       toast.error(error.message);
