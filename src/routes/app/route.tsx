@@ -57,6 +57,13 @@ function AppLayout() {
       color: "text-brand-orange",
     },
     { to: "/app/maisons", label: "Maisons", icon: Home, show: true, color: "text-brand-green" },
+    {
+      to: "/app/agenda",
+      label: "Agenda",
+      icon: CalendarDays,
+      show: true,
+      color: "text-brand-blue",
+    },
     { to: "/app/profil", label: "Profil", icon: User, show: true, color: "text-brand-orange" },
   ].filter((n) => n.show);
 
