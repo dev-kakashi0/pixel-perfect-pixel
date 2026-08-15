@@ -1,7 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { BookOpen, CheckCircle2, Clock, Home, MapPin, Users, Wallet } from "lucide-react";
+import {
+  BookOpen,
+  CheckCircle2,
+  Clock,
+  Flame,
+  Home,
+  MapPin,
+  Trophy,
+  Users,
+  Wallet,
+} from "lucide-react";
+import { calculerStreak, libelleStreak } from "@/lib/streak";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth, roleLabels, statutLabels } from "@/lib/auth";
 import { anneeAcademiqueCourante } from "@/lib/annee";
