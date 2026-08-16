@@ -240,6 +240,77 @@ function MaisonsPage() {
           );
         })}
       </div>
+
+      <Dialog open={!!form} onOpenChange={(o) => !o && setForm(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{form?.id ? "Modifier la maison" : "Nouvelle maison"}</DialogTitle>
+          </DialogHeader>
+          {form && (
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="nom">Nom de la maison</Label>
+                <Input
+                  id="nom"
+                  value={form.nom}
+                  placeholder="Ex. Maison Espoir"
+                  onChange={(e) => setForm({ ...form, nom: e.target.value })}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <Label>Ville</Label>
+                  <Select
+                    value={form.ville}
+                    onValueChange={(v) => setForm({ ...form, ville: v })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Lomé">Lomé</SelectItem>
+                      <SelectItem value="Kara">Kara</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label>Genre</Label>
+                  <Select
+                    value={form.genre}
+                    onValueChange={(v) => setForm({ ...form, genre: v as HouseForm["genre"] })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="garcons">Garçons</SelectItem>
+                      <SelectItem value="filles">Filles</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="capacite">Capacité</Label>
+                <Input
+                  id="capacite"
+                  type="number"
+                  min={1}
+                  value={form.capacite}
+                  onChange={(e) => setForm({ ...form, capacite: Number(e.target.value) })}
+                />
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setForm(null)}>
+              Annuler
+            </Button>
+            <Button onClick={save} disabled={saving}>
+              {saving ? "Enregistrement…" : "Enregistrer"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
