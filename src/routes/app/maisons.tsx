@@ -1,11 +1,40 @@
+import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { Home, MessageCircle, Phone } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Home, MessageCircle, Pencil, Phone, Plus, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { anneeAcademiqueCourante } from "@/lib/annee";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { UserAvatar } from "@/components/user-avatar";
+
+type HouseForm = {
+  id?: string;
+  nom: string;
+  ville: string;
+  genre: "garcons" | "filles";
+  capacite: number;
+};
+
+const emptyHouse: HouseForm = { nom: "", ville: "Lomé", genre: "garcons", capacite: 6 };
 
 export const Route = createFileRoute("/app/maisons")({
   component: MaisonsPage,
@@ -47,19 +76,68 @@ function MaisonsPage() {
   const profiles = data?.profiles ?? [];
   const responsables = data?.responsables ?? [];
 
+  const qc = useQueryClient();
+  const [form, setForm] = useState<HouseForm | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  const save = async () => {
+    if (!form) return;
+    if (!form.nom.trim()) {
+      toast.error("Donne un nom à la maison");
+      return;
+    }
+    setSaving(true);
+    const payload = {
+      nom: form.nom.trim(),
+      ville: form.ville,
+      genre: form.genre,
+      capacite: Number(form.capacite) || 6,
+    };
+    const { error } = form.id
+      ? await supabase.from("houses").update(payload).eq("id", form.id)
+      : await supabase.from("houses").insert(payload);
+    setSaving(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success(form.id ? "Maison mise à jour" : "Maison ajoutée");
+    setForm(null);
+    qc.invalidateQueries({ queryKey: ["maisons"] });
+  };
+
+  const remove = async (id: string, nom: string) => {
+    if (!confirm(`Supprimer la maison « ${nom} » ?`)) return;
+    const { error } = await supabase.from("houses").delete().eq("id", id);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success("Maison supprimée");
+    qc.invalidateQueries({ queryKey: ["maisons"] });
+  };
+
   return (
     <div className="space-y-5">
-      <div>
-        <Badge variant="outline" className="mb-2">
-          Année {anneeAcademiqueCourante()}
-        </Badge>
-        <h1 className="text-2xl font-bold">Les maisons</h1>
-        <p className="text-sm text-muted-foreground">
-          {isAdmin
-            ? "Toutes les maisons de l'ONG : 6 à Lomé et 2 à Kara, 6 résidents par maison."
-            : `Les maisons de ${profile?.ville ?? "votre ville"}, 6 résidents par maison.`}
-        </p>
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <Badge variant="outline" className="mb-2">
+            Année {anneeAcademiqueCourante()}
+          </Badge>
+          <h1 className="text-2xl font-bold">Les maisons</h1>
+          <p className="text-sm text-muted-foreground">
+            {isAdmin
+              ? "Toutes les maisons de l'ONG à Lomé et Kara. Tu peux les nommer et les modifier."
+              : `Les maisons de ${profile?.ville ?? "votre ville"}.`}
+          </p>
+        </div>
+        {isAdmin && (
+          <Button size="sm" onClick={() => setForm({ ...emptyHouse })}>
+            <Plus className="mr-1 h-4 w-4" /> Maison
+          </Button>
+        )}
       </div>
+
 
       {isLoading && <p className="text-sm text-muted-foreground">Chargement…</p>}
 
@@ -81,9 +159,39 @@ function MaisonsPage() {
                     <p className="text-sm text-muted-foreground">{h.ville}</p>
                   </div>
                 </div>
-                <Badge variant={h.genre === "filles" ? "secondary" : "outline"}>
-                  {h.genre === "filles" ? "Filles" : "Garçons"}
-                </Badge>
+                <div className="flex items-center gap-1">
+                  <Badge variant={h.genre === "filles" ? "secondary" : "outline"}>
+                    {h.genre === "filles" ? "Filles" : "Garçons"}
+                  </Badge>
+                  {isAdmin && (
+                    <>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        aria-label={`Modifier ${h.nom}`}
+                        onClick={() =>
+                          setForm({
+                            id: h.id,
+                            nom: h.nom,
+                            ville: h.ville,
+                            genre: h.genre,
+                            capacite: h.capacite,
+                          })
+                        }
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        aria-label={`Supprimer ${h.nom}`}
+                        onClick={() => remove(h.id, h.nom)}
+                      >
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    </>
+                  )}
+                </div>
               </div>
               <p className="mt-3 text-sm text-muted-foreground">
                 {count} / {h.capacite} résidents enregistrés
@@ -132,6 +240,77 @@ function MaisonsPage() {
           );
         })}
       </div>
+
+      <Dialog open={!!form} onOpenChange={(o) => !o && setForm(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{form?.id ? "Modifier la maison" : "Nouvelle maison"}</DialogTitle>
+          </DialogHeader>
+          {form && (
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="nom">Nom de la maison</Label>
+                <Input
+                  id="nom"
+                  value={form.nom}
+                  placeholder="Ex. Maison Espoir"
+                  onChange={(e) => setForm({ ...form, nom: e.target.value })}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <Label>Ville</Label>
+                  <Select
+                    value={form.ville}
+                    onValueChange={(v) => setForm({ ...form, ville: v })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Lomé">Lomé</SelectItem>
+                      <SelectItem value="Kara">Kara</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label>Genre</Label>
+                  <Select
+                    value={form.genre}
+                    onValueChange={(v) => setForm({ ...form, genre: v as HouseForm["genre"] })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="garcons">Garçons</SelectItem>
+                      <SelectItem value="filles">Filles</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="capacite">Capacité</Label>
+                <Input
+                  id="capacite"
+                  type="number"
+                  min={1}
+                  value={form.capacite}
+                  onChange={(e) => setForm({ ...form, capacite: Number(e.target.value) })}
+                />
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setForm(null)}>
+              Annuler
+            </Button>
+            <Button onClick={save} disabled={saving}>
+              {saving ? "Enregistrement…" : "Enregistrer"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
