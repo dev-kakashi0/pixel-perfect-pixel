@@ -76,19 +76,68 @@ function MaisonsPage() {
   const profiles = data?.profiles ?? [];
   const responsables = data?.responsables ?? [];
 
+  const qc = useQueryClient();
+  const [form, setForm] = useState<HouseForm | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  const save = async () => {
+    if (!form) return;
+    if (!form.nom.trim()) {
+      toast.error("Donne un nom à la maison");
+      return;
+    }
+    setSaving(true);
+    const payload = {
+      nom: form.nom.trim(),
+      ville: form.ville,
+      genre: form.genre,
+      capacite: Number(form.capacite) || 6,
+    };
+    const { error } = form.id
+      ? await supabase.from("houses").update(payload).eq("id", form.id)
+      : await supabase.from("houses").insert(payload);
+    setSaving(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success(form.id ? "Maison mise à jour" : "Maison ajoutée");
+    setForm(null);
+    qc.invalidateQueries({ queryKey: ["maisons"] });
+  };
+
+  const remove = async (id: string, nom: string) => {
+    if (!confirm(`Supprimer la maison « ${nom} » ?`)) return;
+    const { error } = await supabase.from("houses").delete().eq("id", id);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success("Maison supprimée");
+    qc.invalidateQueries({ queryKey: ["maisons"] });
+  };
+
   return (
     <div className="space-y-5">
-      <div>
-        <Badge variant="outline" className="mb-2">
-          Année {anneeAcademiqueCourante()}
-        </Badge>
-        <h1 className="text-2xl font-bold">Les maisons</h1>
-        <p className="text-sm text-muted-foreground">
-          {isAdmin
-            ? "Toutes les maisons de l'ONG : 6 à Lomé et 2 à Kara, 6 résidents par maison."
-            : `Les maisons de ${profile?.ville ?? "votre ville"}, 6 résidents par maison.`}
-        </p>
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <Badge variant="outline" className="mb-2">
+            Année {anneeAcademiqueCourante()}
+          </Badge>
+          <h1 className="text-2xl font-bold">Les maisons</h1>
+          <p className="text-sm text-muted-foreground">
+            {isAdmin
+              ? "Toutes les maisons de l'ONG à Lomé et Kara. Tu peux les nommer et les modifier."
+              : `Les maisons de ${profile?.ville ?? "votre ville"}.`}
+          </p>
+        </div>
+        {isAdmin && (
+          <Button size="sm" onClick={() => setForm({ ...emptyHouse })}>
+            <Plus className="mr-1 h-4 w-4" /> Maison
+          </Button>
+        )}
       </div>
+
 
       {isLoading && <p className="text-sm text-muted-foreground">Chargement…</p>}
 
