@@ -159,9 +159,39 @@ function MaisonsPage() {
                     <p className="text-sm text-muted-foreground">{h.ville}</p>
                   </div>
                 </div>
-                <Badge variant={h.genre === "filles" ? "secondary" : "outline"}>
-                  {h.genre === "filles" ? "Filles" : "Garçons"}
-                </Badge>
+                <div className="flex items-center gap-1">
+                  <Badge variant={h.genre === "filles" ? "secondary" : "outline"}>
+                    {h.genre === "filles" ? "Filles" : "Garçons"}
+                  </Badge>
+                  {isAdmin && (
+                    <>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        aria-label={`Modifier ${h.nom}`}
+                        onClick={() =>
+                          setForm({
+                            id: h.id,
+                            nom: h.nom,
+                            ville: h.ville,
+                            genre: h.genre,
+                            capacite: h.capacite,
+                          })
+                        }
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        aria-label={`Supprimer ${h.nom}`}
+                        onClick={() => remove(h.id, h.nom)}
+                      >
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    </>
+                  )}
+                </div>
               </div>
               <p className="mt-3 text-sm text-muted-foreground">
                 {count} / {h.capacite} résidents enregistrés
