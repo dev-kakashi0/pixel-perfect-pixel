@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Camera } from "lucide-react";
 import { UserAvatar } from "@/components/user-avatar";
+import { MesNotes } from "@/components/notes-universitaires";
 
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -171,6 +172,8 @@ function ProfilPage() {
         </div>
       </div>
 
+
+      {user && <MesNotes userId={user.id} />}
 
       <form className="surface-card space-y-4 p-5" onSubmit={save}>
         <div className="grid gap-4 sm:grid-cols-2">
