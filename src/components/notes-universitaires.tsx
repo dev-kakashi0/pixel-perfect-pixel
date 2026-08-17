@@ -97,6 +97,11 @@ export function MesNotes({ userId }: { userId: string }) {
   const [busy, setBusy] = useState(false);
 
   const envoyer = async (file: File) => {
+    const periodeTrim = periode.trim();
+    if (!periodeTrim) {
+      toast.error("Indique la période concernée avant d'envoyer.");
+      return;
+    }
     setBusy(true);
     const ext = file.name.split(".").pop() ?? "jpg";
     const chemin = `${userId}/notes-${Date.now()}.${ext}`;
@@ -110,7 +115,7 @@ export function MesNotes({ userId }: { userId: string }) {
     }
     const { error } = await supabase.from("grade_reports").insert({
       student_id: userId,
-      periode: periode.trim() || null,
+      periode: periodeTrim,
       storage_path: chemin,
     });
     setBusy(false);
@@ -147,16 +152,17 @@ export function MesNotes({ userId }: { userId: string }) {
 
       <div className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-end">
         <div className="space-y-1.5">
-          <Label htmlFor="periode">Période concernée (optionnel)</Label>
+          <Label htmlFor="periode">Période concernée *</Label>
           <Input
             id="periode"
             value={periode}
+            required
             placeholder="Ex. Semestre 1 - 2025/2026"
             onChange={(e) => setPeriode(e.target.value)}
           />
         </div>
         <label className="inline-flex">
-          <Button asChild disabled={busy}>
+          <Button asChild disabled={busy || !periode.trim()}>
             <span className="cursor-pointer">
               <Upload className="mr-1 h-4 w-4" />
               {busy ? "Envoi…" : "Envoyer une capture"}

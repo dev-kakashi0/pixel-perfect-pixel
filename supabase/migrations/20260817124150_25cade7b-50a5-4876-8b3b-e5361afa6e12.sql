@@ -1,0 +1,1 @@
+ALTER TABLE public.grade_reports ALTER COLUMN periode SET NOT NULL;
