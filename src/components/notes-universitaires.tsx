@@ -97,6 +97,11 @@ export function MesNotes({ userId }: { userId: string }) {
   const [busy, setBusy] = useState(false);
 
   const envoyer = async (file: File) => {
+    const periodeTrim = periode.trim();
+    if (!periodeTrim) {
+      toast.error("Indique la période concernée avant d'envoyer.");
+      return;
+    }
     setBusy(true);
     const ext = file.name.split(".").pop() ?? "jpg";
     const chemin = `${userId}/notes-${Date.now()}.${ext}`;
@@ -110,7 +115,7 @@ export function MesNotes({ userId }: { userId: string }) {
     }
     const { error } = await supabase.from("grade_reports").insert({
       student_id: userId,
-      periode: periode.trim() || null,
+      periode: periodeTrim,
       storage_path: chemin,
     });
     setBusy(false);
