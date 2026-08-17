@@ -208,6 +208,30 @@ export type Database = {
         }
         Relationships: []
       }
+      grade_reports: {
+        Row: {
+          created_at: string
+          id: string
+          periode: string | null
+          storage_path: string
+          student_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          periode?: string | null
+          storage_path: string
+          student_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          periode?: string | null
+          storage_path?: string
+          student_id?: string
+        }
+        Relationships: []
+      }
       house_assignments: {
         Row: {
           academic_year_id: string | null

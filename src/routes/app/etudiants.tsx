@@ -15,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { NotesEtudiant } from "@/components/notes-universitaires";
 
 export const Route = createFileRoute("/app/etudiants")({
   component: EtudiantsPage,
@@ -262,6 +263,8 @@ function EtudiantsPage() {
                       </ul>
                     </div>
                   )}
+
+                  <NotesEtudiant studentId={p.id} />
 
                   {isAdmin && (
                     <div className="space-y-3">
