@@ -212,21 +212,21 @@ export type Database = {
         Row: {
           created_at: string
           id: string
-          periode: string | null
+          periode: string
           storage_path: string
           student_id: string
         }
         Insert: {
           created_at?: string
           id?: string
-          periode?: string | null
+          periode: string
           storage_path: string
           student_id: string
         }
         Update: {
           created_at?: string
           id?: string
-          periode?: string | null
+          periode?: string
           storage_path?: string
           student_id?: string
         }
