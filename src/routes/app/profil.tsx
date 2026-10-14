@@ -18,7 +18,6 @@ export const Route = createFileRoute("/app/profil")({
   head: () => ({
     meta: [
       { title: "Mon profil — ONG Temps d'Aider" },
-...
       { property: "og:title", content: "Mon profil — ONG Temps d'Aider" },
       { property: "og:description", content: "Fiche résident de l'ONG au Togo." },
     ],

@@ -14,7 +14,6 @@ export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
       { title: "Connexion — ONG Temps d'Aider" },
-...
       { property: "og:title", content: "Connexion — ONG Temps d'Aider" },
       { property: "og:description", content: "Accès à la plateforme des foyers étudiants de l'ONG." },
     ],
