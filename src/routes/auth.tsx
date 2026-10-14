@@ -24,6 +24,8 @@ function AuthPage() {
   const navigate = useNavigate();
   const { session, loading } = useAuth();
   const [busy, setBusy] = useState(false);
+  const [mode, setMode] = useState<"login" | "forgot">("login");
+  const [resetSent, setResetSent] = useState(false);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -44,6 +46,20 @@ function AuthPage() {
       return;
     }
     void navigate({ to: "/app" });
+  };
+
+  const sendReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setBusy(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/reset`,
+    });
+    setBusy(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    setResetSent(true);
   };
 
   const signUp = async (e: React.FormEvent) => {
@@ -96,6 +112,49 @@ function AuthPage() {
         </p>
 
         <div className="surface-card mt-6 p-5">
+          {mode === "forgot" ? (
+            <div>
+              {resetSent ? (
+                <div className="space-y-4 text-center">
+                  <p className="text-sm text-foreground">
+                    Si un compte existe avec cet email, un lien de réinitialisation vient
+                    d'être envoyé. Vérifiez votre boîte de réception (et vos spams).
+                  </p>
+                  <Button variant="outline" className="w-full" onClick={() => setMode("login")}>
+                    Retour à la connexion
+                  </Button>
+                </div>
+              ) : (
+                <form className="space-y-4" onSubmit={sendReset}>
+                  <p className="text-sm text-muted-foreground">
+                    Entrez votre email : nous vous enverrons un lien pour choisir un nouveau
+                    mot de passe.
+                  </p>
+                  <div className="space-y-2">
+                    <Label htmlFor="reset-email">Email</Label>
+                    <Input
+                      id="reset-email"
+                      type="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </div>
+                  <Button type="submit" className="w-full" disabled={busy}>
+                    Envoyer le lien
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="w-full"
+                    onClick={() => setMode("login")}
+                  >
+                    Retour à la connexion
+                  </Button>
+                </form>
+              )}
+            </div>
+          ) : (
           <Tabs defaultValue="login">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="login">Connexion</TabsTrigger>
@@ -127,6 +186,13 @@ function AuthPage() {
                 <Button type="submit" className="w-full" disabled={busy}>
                   Se connecter
                 </Button>
+                <button
+                  type="button"
+                  className="w-full text-center text-sm text-primary underline-offset-4 hover:underline"
+                  onClick={() => setMode("forgot")}
+                >
+                  Mot de passe oublié ?
+                </button>
               </form>
             </TabsContent>
 
@@ -177,6 +243,8 @@ function AuthPage() {
               </form>
             </TabsContent>
           </Tabs>
+          )}
+
 
           <div className="my-5 flex items-center gap-3 text-xs text-muted-foreground">
             <span className="h-px flex-1 bg-border" />
