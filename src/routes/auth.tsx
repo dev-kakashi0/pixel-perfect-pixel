@@ -112,6 +112,49 @@ function AuthPage() {
         </p>
 
         <div className="surface-card mt-6 p-5">
+          {mode === "forgot" ? (
+            <div>
+              {resetSent ? (
+                <div className="space-y-4 text-center">
+                  <p className="text-sm text-foreground">
+                    Si un compte existe avec cet email, un lien de réinitialisation vient
+                    d'être envoyé. Vérifiez votre boîte de réception (et vos spams).
+                  </p>
+                  <Button variant="outline" className="w-full" onClick={() => setMode("login")}>
+                    Retour à la connexion
+                  </Button>
+                </div>
+              ) : (
+                <form className="space-y-4" onSubmit={sendReset}>
+                  <p className="text-sm text-muted-foreground">
+                    Entrez votre email : nous vous enverrons un lien pour choisir un nouveau
+                    mot de passe.
+                  </p>
+                  <div className="space-y-2">
+                    <Label htmlFor="reset-email">Email</Label>
+                    <Input
+                      id="reset-email"
+                      type="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </div>
+                  <Button type="submit" className="w-full" disabled={busy}>
+                    Envoyer le lien
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="w-full"
+                    onClick={() => setMode("login")}
+                  >
+                    Retour à la connexion
+                  </Button>
+                </form>
+              )}
+            </div>
+          ) : (
           <Tabs defaultValue="login">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="login">Connexion</TabsTrigger>
