@@ -94,7 +94,7 @@ function AuthPage() {
         <Link to="/" className="text-sm text-muted-foreground">
           ← Accueil
         </Link>
-        <h1 className="mt-4 text-3xl font-bold">Foyers ONG Togo</h1>
+        <h1 className="mt-4 text-3xl font-bold">ONG Temps d'Aider</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Connectez-vous pour accéder à votre espace.
         </p>
