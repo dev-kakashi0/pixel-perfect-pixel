@@ -492,6 +492,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_active_member: { Args: never; Returns: boolean }
       manages_house: {
         Args: { _house_id: string; _user_id: string }
         Returns: boolean
