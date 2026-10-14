@@ -17,9 +17,8 @@ export const Route = createFileRoute("/app/profil")({
   component: ProfilPage,
   head: () => ({
     meta: [
-      { title: "Mon profil — Foyers ONG Togo" },
-      { name: "description", content: "Complétez votre fiche : études, origine et coordonnées." },
-      { property: "og:title", content: "Mon profil — Foyers ONG Togo" },
+      { title: "Mon profil — ONG Temps d'Aider" },
+      { property: "og:title", content: "Mon profil — ONG Temps d'Aider" },
       { property: "og:description", content: "Fiche résident de l'ONG au Togo." },
     ],
   }),
