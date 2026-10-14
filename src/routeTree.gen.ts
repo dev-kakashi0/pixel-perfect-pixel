@@ -20,6 +20,7 @@ import { Route as AppEtudiantsRouteImport } from './routes/app/etudiants'
 import { Route as AppLectureRouteImport } from './routes/app/lecture'
 import { Route as AppMaisonsRouteImport } from './routes/app/maisons'
 import { Route as AppProfilRouteImport } from './routes/app/profil'
+import { Route as AuthResetRouteImport } from './routes/auth/reset'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -76,11 +77,16 @@ const AppProfilRoute = AppProfilRouteImport.update({
   path: '/profil',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AuthResetRoute = AuthResetRouteImport.update({
+  id: '/reset',
+  path: '/reset',
+  getParentRoute: () => AuthRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteRouteWithChildren
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/app/agenda': typeof AppAgendaRoute
   '/app/bibliotheque': typeof AppBibliothequeRoute
   '/app/contributions': typeof AppContributionsRoute
@@ -88,11 +94,12 @@ export interface FileRoutesByFullPath {
   '/app/lecture': typeof AppLectureRoute
   '/app/maisons': typeof AppMaisonsRoute
   '/app/profil': typeof AppProfilRoute
+  '/auth/reset': typeof AuthResetRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/app/agenda': typeof AppAgendaRoute
   '/app/bibliotheque': typeof AppBibliothequeRoute
   '/app/contributions': typeof AppContributionsRoute
@@ -100,13 +107,14 @@ export interface FileRoutesByTo {
   '/app/lecture': typeof AppLectureRoute
   '/app/maisons': typeof AppMaisonsRoute
   '/app/profil': typeof AppProfilRoute
+  '/auth/reset': typeof AuthResetRoute
   '/app': typeof AppIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/app': typeof AppRouteRouteWithChildren
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/app/agenda': typeof AppAgendaRoute
   '/app/bibliotheque': typeof AppBibliothequeRoute
   '/app/contributions': typeof AppContributionsRoute
@@ -114,6 +122,7 @@ export interface FileRoutesById {
   '/app/lecture': typeof AppLectureRoute
   '/app/maisons': typeof AppMaisonsRoute
   '/app/profil': typeof AppProfilRoute
+  '/auth/reset': typeof AuthResetRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
@@ -129,6 +138,7 @@ export interface FileRouteTypes {
     | '/app/lecture'
     | '/app/maisons'
     | '/app/profil'
+    | '/auth/reset'
     | '/app/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -141,6 +151,7 @@ export interface FileRouteTypes {
     | '/app/lecture'
     | '/app/maisons'
     | '/app/profil'
+    | '/auth/reset'
     | '/app'
   id:
     | '__root__'
@@ -154,13 +165,14 @@ export interface FileRouteTypes {
     | '/app/lecture'
     | '/app/maisons'
     | '/app/profil'
+    | '/auth/reset'
     | '/app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRouteRoute: typeof AppRouteRouteWithChildren
-  AuthRoute: typeof AuthRoute
+  AuthRoute: typeof AuthRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -242,6 +254,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProfilRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/auth/reset': {
+      id: '/auth/reset'
+      path: '/reset'
+      fullPath: '/auth/reset'
+      preLoaderRoute: typeof AuthResetRouteImport
+      parentRoute: typeof AuthRoute
+    }
   }
 }
 
@@ -271,10 +290,20 @@ const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(
   AppRouteRouteChildren,
 )
 
+interface AuthRouteChildren {
+  AuthResetRoute: typeof AuthResetRoute
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
+  AuthResetRoute: AuthResetRoute,
+}
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRouteRoute: AppRouteRouteWithChildren,
-  AuthRoute: AuthRoute,
+  AuthRoute: AuthRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
