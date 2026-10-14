@@ -186,6 +186,13 @@ function AuthPage() {
                 <Button type="submit" className="w-full" disabled={busy}>
                   Se connecter
                 </Button>
+                <button
+                  type="button"
+                  className="w-full text-center text-sm text-primary underline-offset-4 hover:underline"
+                  onClick={() => setMode("forgot")}
+                >
+                  Mot de passe oublié ?
+                </button>
               </form>
             </TabsContent>
 
