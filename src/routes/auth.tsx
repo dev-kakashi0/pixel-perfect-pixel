@@ -13,12 +13,9 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
   head: () => ({
     meta: [
-      { title: "Connexion — Foyers ONG Togo" },
-      {
-        name: "description",
-        content: "Connectez-vous ou créez votre compte pour accéder à votre maison et votre profil.",
-      },
-      { property: "og:title", content: "Connexion — Foyers ONG Togo" },
+      { title: "Connexion — ONG Temps d'Aider" },
+...
+      { property: "og:title", content: "Connexion — ONG Temps d'Aider" },
       { property: "og:description", content: "Accès à la plateforme des foyers étudiants de l'ONG." },
     ],
   }),
